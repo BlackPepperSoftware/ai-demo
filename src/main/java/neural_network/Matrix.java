@@ -78,6 +78,18 @@ public class Matrix
 		return result;
 	}
 	
+	public Matrix column(int columnIndex, double... values)
+	{
+		Matrix result = new Matrix(this);
+		
+		for (int rowIndex = 0; rowIndex < values.length; rowIndex++)
+		{
+			result.values[rowIndex][columnIndex] = values[rowIndex];
+		}
+		
+		return result;
+	}
+	
 	public Matrix subtract(Matrix that)
 	{
 		checkArgument(rowCount == that.rowCount && columnCount == that.columnCount, "Invalid matrix size");

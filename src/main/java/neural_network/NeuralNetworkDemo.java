@@ -8,10 +8,7 @@ public class NeuralNetworkDemo
 	{
 		NeuralNetwork network = new NeuralNetwork(1, 3, 1);
 		
-		Matrix input = new Matrix(3, 1)
-			.row(0, 0.25)
-			.row(1, 0.5)
-			.row(2, 0.75);
+		Matrix input = new Matrix(3, 1).column(0, 0.25, 0.5, 0.75);
 		
 		// normalised sine function
 		Matrix target = input.map(x -> (Math.sin(x * 2 * Math.PI) + 1) / 2);
