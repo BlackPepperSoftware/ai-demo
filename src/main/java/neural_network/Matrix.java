@@ -17,10 +17,7 @@ public class Matrix
 	
 	public Matrix(int rowCount, int columnCount)
 	{
-		if (rowCount < 1 || columnCount < 1)
-		{
-			throw new IllegalArgumentException("Invalid size");
-		}
+		checkArgument(rowCount > 0 && columnCount > 0, "Invalid matrix size");
 		
 		this.rowCount = rowCount;
 		this.columnCount = columnCount;
@@ -71,10 +68,7 @@ public class Matrix
 	
 	public Matrix multiply(Matrix that)
 	{
-		if (columnCount != that.rowCount)
-		{
-			throw new IllegalArgumentException("Cannot multiply matrices");
-		}
+		checkArgument(columnCount == that.rowCount, "Invalid matrix size");
 		
 		Matrix result = new Matrix(rowCount, that.columnCount);
 		
@@ -116,7 +110,7 @@ public class Matrix
 	 */
 	public Matrix scaleSigmoid()
 	{
-		return map(t -> 1 / (1 + Math.exp(-t)));
+		return map(x -> 1 / (1 + Math.exp(-x)));
 	}
 	
 	@Override
@@ -133,5 +127,13 @@ public class Matrix
 		}
 		
 		return builder.toString();
+	}
+	
+	private static void checkArgument(boolean condition, String message)
+	{
+		if (!condition)
+		{
+			throw new IllegalArgumentException(message);
+		}
 	}
 }
