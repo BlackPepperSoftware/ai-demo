@@ -36,6 +36,18 @@ public class Matrix
 		}
 	}
 	
+	public DoubleStream column(int columnIndex)
+	{
+		double[] column = new double[rowCount];
+		
+		for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
+		{
+			column[rowIndex] = values[rowIndex][columnIndex];
+		}
+		
+		return Arrays.stream(column);
+	}
+	
 	public Matrix fill(DoubleSupplier supplier)
 	{
 		Matrix result = new Matrix(rowCount, columnCount);
@@ -66,6 +78,23 @@ public class Matrix
 		return result;
 	}
 	
+	public Matrix subtract(Matrix that)
+	{
+		checkArgument(rowCount == that.rowCount && columnCount == that.columnCount, "Invalid matrix size");
+		
+		Matrix result = new Matrix(this);
+		
+		for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
+		{
+			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
+			{
+				result.values[rowIndex][columnIndex] -= that.values[rowIndex][columnIndex];
+			}
+		}
+		
+		return result;
+	}
+	
 	public Matrix multiply(Matrix that)
 	{
 		checkArgument(columnCount == that.rowCount, "Invalid matrix size");
@@ -90,6 +119,26 @@ public class Matrix
 		return result;
 	}
 	
+	/**
+	 * Element-wise multiplication.
+	 */
+	public Matrix times(Matrix that)
+	{
+		checkArgument(rowCount == that.rowCount && columnCount == that.columnCount, "Invalid matrix size");
+		
+		Matrix result = new Matrix(this);
+		
+		for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
+		{
+			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
+			{
+				result.values[rowIndex][columnIndex] *= that.values[rowIndex][columnIndex];
+			}
+		}
+		
+		return result;
+	}
+	
 	public Matrix map(DoubleUnaryOperator function)
 	{
 		Matrix result = new Matrix(this);
@@ -105,12 +154,45 @@ public class Matrix
 		return result;
 	}
 	
+	public Matrix scale(double scalar)
+	{
+		return map(value -> value * scalar);
+	}
+	
 	/**
 	 * @see <a href="https://en.wikipedia.org/wiki/Sigmoid_function">Sigmoid function</a>
 	 */
 	public Matrix scaleSigmoid()
 	{
 		return map(x -> 1 / (1 + Math.exp(-x)));
+	}
+	
+	/**
+	 * Sigmoid differential.
+	 */
+	public Matrix scaleSigmoidPrime()
+	{
+		return map(x -> Math.exp(-x) / Math.pow(1 + Math.exp(-x), 2));
+	}
+	
+	public Matrix square()
+	{
+		return map(x -> x * x);
+	}
+	
+	public Matrix transpose()
+	{
+		Matrix result = new Matrix(columnCount, rowCount);
+		
+		for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
+		{
+			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
+			{
+				result.values[columnIndex][rowIndex] = values[rowIndex][columnIndex];
+			}
+		}
+		
+		return result;
 	}
 	
 	@Override
