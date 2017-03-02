@@ -2,10 +2,14 @@ package neural_network;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
 import java.util.function.DoubleUnaryOperator;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
+
+import static java.util.stream.Collectors.joining;
 
 public class Matrix
 {
@@ -34,6 +38,21 @@ public class Matrix
 		{
 			System.arraycopy(that.values[rowIndex], 0, values[rowIndex], 0, columnCount);
 		}
+	}
+	
+	public static Matrix ofColumn(double... values)
+	{
+		return new Matrix(values.length, 1).column(0, values);
+	}
+	
+	public int rowCount()
+	{
+		return rowCount;
+	}
+	
+	public int columnCount()
+	{
+		return columnCount;
 	}
 	
 	public DoubleStream column(int columnIndex)
@@ -207,16 +226,26 @@ public class Matrix
 		return result;
 	}
 	
+	public String toTsv()
+	{
+		return toString(String::valueOf, joining("\t", "", "\n"));
+	}
+	
 	@Override
 	public String toString()
+	{
+		return toString(value -> String.format("%f", value), Collectors.joining(", ", "[", "]\n"));
+	}
+	
+	private String toString(DoubleFunction<String> valueToString, Collector<CharSequence, ?, String> rowCollector)
 	{
 		StringBuilder builder = new StringBuilder();
 		
 		for (double[] row : values)
 		{
 			builder.append(Arrays.stream(row)
-				.mapToObj(value -> String.format("%f", value))
-				.collect(Collectors.joining(", ", "[", "]\n"))
+				.mapToObj(valueToString)
+				.collect(rowCollector)
 			);
 		}
 		
