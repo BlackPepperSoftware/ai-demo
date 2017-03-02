@@ -6,7 +6,6 @@ import java.util.function.DoubleFunction;
 import java.util.function.DoubleSupplier;
 import java.util.function.DoubleUnaryOperator;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 import static java.util.stream.Collectors.joining;
@@ -233,7 +232,7 @@ public class Matrix
 	@Override
 	public String toString()
 	{
-		return toString(value -> String.format("%f", value), Collectors.joining(", ", "[", "]\n"));
+		return toString(value -> String.format("%f", value), joining(", ", "[", "]\n"));
 	}
 	
 	private String toString(DoubleFunction<String> valueToString, Collector<CharSequence, ?, String> rowCollector)
