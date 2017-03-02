@@ -96,7 +96,7 @@ public class Matrix
 		return result;
 	}
 	
-	public Matrix scale(DoubleUnaryOperator function)
+	public Matrix map(DoubleUnaryOperator function)
 	{
 		Matrix result = new Matrix(this);
 		
@@ -116,7 +116,7 @@ public class Matrix
 	 */
 	public Matrix scaleSigmoid()
 	{
-		return scale(t -> 1 / (1 + Math.exp(-t)));
+		return map(t -> 1 / (1 + Math.exp(-t)));
 	}
 	
 	@Override
