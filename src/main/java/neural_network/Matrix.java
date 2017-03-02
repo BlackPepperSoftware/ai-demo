@@ -55,6 +55,15 @@ public class Matrix
 		return columnCount;
 	}
 	
+	public Matrix row(int rowIndex, double... values)
+	{
+		Matrix result = new Matrix(this);
+		
+		System.arraycopy(values, 0, result.values[rowIndex], 0, values.length);
+		
+		return result;
+	}
+	
 	public DoubleStream column(int columnIndex)
 	{
 		double[] column = new double[rowCount];
@@ -65,6 +74,18 @@ public class Matrix
 		}
 		
 		return Arrays.stream(column);
+	}
+	
+	public Matrix column(int columnIndex, double... values)
+	{
+		Matrix result = new Matrix(this);
+		
+		for (int rowIndex = 0; rowIndex < values.length; rowIndex++)
+		{
+			result.values[rowIndex][columnIndex] = values[rowIndex];
+		}
+		
+		return result;
 	}
 	
 	public Matrix fill(DoubleSupplier supplier)
@@ -86,27 +107,6 @@ public class Matrix
 	public Matrix fillGaussian(Random random)
 	{
 		return fill(random::nextGaussian);
-	}
-	
-	public Matrix row(int rowIndex, double... values)
-	{
-		Matrix result = new Matrix(this);
-		
-		System.arraycopy(values, 0, result.values[rowIndex], 0, values.length);
-		
-		return result;
-	}
-	
-	public Matrix column(int columnIndex, double... values)
-	{
-		Matrix result = new Matrix(this);
-		
-		for (int rowIndex = 0; rowIndex < values.length; rowIndex++)
-		{
-			result.values[rowIndex][columnIndex] = values[rowIndex];
-		}
-		
-		return result;
 	}
 	
 	public Matrix subtract(Matrix that)
