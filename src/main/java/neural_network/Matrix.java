@@ -55,6 +55,11 @@ public class Matrix
 		return columnCount;
 	}
 	
+	public DoubleStream row(int rowIndex)
+	{
+		return Arrays.stream(values[rowIndex]);
+	}
+	
 	public Matrix row(int rowIndex, double... values)
 	{
 		Matrix result = new Matrix(this);
@@ -66,14 +71,8 @@ public class Matrix
 	
 	public DoubleStream column(int columnIndex)
 	{
-		double[] column = new double[rowCount];
-		
-		for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
-		{
-			column[rowIndex] = values[rowIndex][columnIndex];
-		}
-		
-		return Arrays.stream(column);
+		return Arrays.stream(values)
+			.mapToDouble(row -> row[columnIndex]);
 	}
 	
 	public Matrix column(int columnIndex, double... values)
