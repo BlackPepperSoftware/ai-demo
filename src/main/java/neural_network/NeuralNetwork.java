@@ -26,9 +26,7 @@ public class NeuralNetwork
 	public double cost(Matrix input, Matrix target)
 	{
 		Matrix output = forward(input);
-		
 		Matrix costs = target.subtract(output).square().scale(0.5);
-
 		return costs.column(0).average().orElse(0);
 	}
 	
