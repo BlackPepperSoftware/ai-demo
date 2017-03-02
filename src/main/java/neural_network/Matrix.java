@@ -9,47 +9,47 @@ import java.util.stream.DoubleStream;
 
 public class Matrix
 {
-	private final int rows;
+	private final int rowCount;
 	
-	private final int columns;
+	private final int columnCount;
 	
 	private final double[][] values;
 	
-	public Matrix(int rows, int columns)
+	public Matrix(int rowCount, int columnCount)
 	{
-		if (rows < 1 || columns < 1)
+		if (rowCount < 1 || columnCount < 1)
 		{
 			throw new IllegalArgumentException("Invalid size");
 		}
 		
-		this.rows = rows;
-		this.columns = columns;
-		values = new double[rows][columns];
+		this.rowCount = rowCount;
+		this.columnCount = columnCount;
+		values = new double[rowCount][columnCount];
 	}
 	
 	public Matrix(Matrix that)
 	{
-		rows = that.rows;
-		columns = that.columns;
-		values = new double[rows][columns];
+		rowCount = that.rowCount;
+		columnCount = that.columnCount;
+		values = new double[rowCount][columnCount];
 		
-		for (int row = 0; row < rows; row++)
+		for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
 		{
-			System.arraycopy(that.values[row], 0, values[row], 0, columns);
+			System.arraycopy(that.values[rowIndex], 0, values[rowIndex], 0, columnCount);
 		}
 	}
 	
 	public Matrix fill(DoubleSupplier supplier)
 	{
-		Matrix result = new Matrix(rows, columns);
+		Matrix result = new Matrix(rowCount, columnCount);
 		
 		for (double[] row : result.values)
 		{
 			double[] newRow = DoubleStream.generate(supplier)
-				.limit(columns)
+				.limit(columnCount)
 				.toArray();
 			
-			System.arraycopy(newRow, 0, row, 0, columns);
+			System.arraycopy(newRow, 0, row, 0, columnCount);
 		}
 		
 		return result;
@@ -60,36 +60,36 @@ public class Matrix
 		return fill(random::nextGaussian);
 	}
 	
-	public Matrix row(int row, double... values)
+	public Matrix row(int rowIndex, double... values)
 	{
 		Matrix result = new Matrix(this);
 		
-		System.arraycopy(values, 0, result.values[row], 0, values.length);
+		System.arraycopy(values, 0, result.values[rowIndex], 0, values.length);
 		
 		return result;
 	}
 	
 	public Matrix multiply(Matrix that)
 	{
-		if (columns != that.rows)
+		if (columnCount != that.rowCount)
 		{
 			throw new IllegalArgumentException("Cannot multiply matrices");
 		}
 		
-		Matrix result = new Matrix(rows, that.columns);
+		Matrix result = new Matrix(rowCount, that.columnCount);
 		
-		for (int row = 0; row < rows; row++)
+		for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
 		{
-			for (int column = 0; column < that.columns; column++)
+			for (int columnIndex = 0; columnIndex < that.columnCount; columnIndex++)
 			{
 				double value = 0;
 				
-				for (int index = 0; index < columns; index++)
+				for (int index = 0; index < columnCount; index++)
 				{
-					value += values[row][index] * that.values[index][column];
+					value += values[rowIndex][index] * that.values[index][columnIndex];
 				}
 				
-				result.values[row][column] = value;
+				result.values[rowIndex][columnIndex] = value;
 			}
 		}
 		
@@ -102,9 +102,9 @@ public class Matrix
 		
 		for (double[] row : result.values)
 		{
-			for (int column = 0; column < columns; column++)
+			for (int columnIndex = 0; columnIndex < columnCount; columnIndex++)
 			{
-				row[column] = function.applyAsDouble(row[column]);
+				row[columnIndex] = function.applyAsDouble(row[columnIndex]);
 			}
 		}
 		
