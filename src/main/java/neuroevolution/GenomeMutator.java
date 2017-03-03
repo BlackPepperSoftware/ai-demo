@@ -49,6 +49,8 @@ class GenomeMutator
 			result = mutateNodes(result);
 		}
 		
+		// TODO: mutate enabled/disabled genes
+		
 		return result;
 	}
 	
