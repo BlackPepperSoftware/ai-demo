@@ -22,4 +22,12 @@ public class Species
 	{
 		return genomes.stream();
 	}
+	
+	public boolean isCompatibleWith(Genome genome)
+	{
+		Genome someGenome = getGenomes().findAny()
+			.orElseThrow(() -> new IllegalStateException("Empty species"));
+		
+		return new GenomeComparator().compare(someGenome, genome) == 0;
+	}
 }

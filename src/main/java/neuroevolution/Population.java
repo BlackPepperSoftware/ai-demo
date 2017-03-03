@@ -37,11 +37,7 @@ public class Population
 	private Optional<Species> findSpecies(Genome genome)
 	{
 		return speciesList.stream()
-			.filter(species -> species.getGenomes()
-				.findFirst()
-				.orElseThrow(() -> new IllegalStateException("Empty species"))
-				.sameSpecies(genome)
-			)
+			.filter(species -> species.isCompatibleWith(genome))
 			.findFirst();
 	}
 }

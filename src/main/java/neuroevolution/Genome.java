@@ -33,11 +33,6 @@ public class Genome
 		return genes.stream();
 	}
 	
-	public boolean sameSpecies(Genome that)
-	{
-		return new GenomeComparator().compare(this, that) == 0;
-	}
-	
 	public Genome mutate()
 	{
 		Genome genome = new Genome(this);
