@@ -15,7 +15,7 @@ public class Population
 	{
 		speciesList = new ArrayList<>();
 		
-		Stream.generate(() -> new Genome(inputNodeCount, outputNodeCount))
+		Stream.generate(() -> new Genome().addInputNodes(inputNodeCount).addOutputNodes(outputNodeCount))
 			.map(genome -> genome.mutate(geneFactory, random))
 			.limit(size)
 			.forEach(this::addGenome);

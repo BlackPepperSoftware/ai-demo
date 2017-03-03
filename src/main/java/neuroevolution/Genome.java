@@ -20,11 +20,6 @@ public class Genome
 {
 	private final List<Gene> genes;
 	
-	public Genome(int inputNodeCount, int outputNodeCount)
-	{
-		this(newNodeGenes(inputNodeCount, outputNodeCount));
-	}
-	
 	public Genome(Gene... genes)
 	{
 		this(Stream.of(genes));
@@ -46,7 +41,22 @@ public class Genome
 	
 	public Genome addGene(Gene gene)
 	{
-		return new Genome(Stream.concat(getGenes(), Stream.of(gene)));
+		return addGenes(Stream.of(gene));
+	}
+	
+	public Genome addGenes(Stream<? extends Gene> genes)
+	{
+		return new Genome(Stream.concat(getGenes(), genes));
+	}
+	
+	public Genome addInputNodes(int count)
+	{
+		return addGenes(Stream.generate(NodeGene::newInput).limit(count));
+	}
+	
+	public Genome addOutputNodes(int count)
+	{
+		return addGenes(Stream.generate(NodeGene::newOutput).limit(count));
 	}
 	
 	public Genome disableGene(ConnectionGene connection)
@@ -96,14 +106,6 @@ public class Genome
 	public void print(PrintStream out)
 	{
 		out.println("  " + genes);
-	}
-	
-	private static Stream<Gene> newNodeGenes(int inputNodeCount, int outputNodeCount)
-	{
-		return Stream.concat(
-			Stream.generate(NodeGene::newInput).limit(inputNodeCount),
-			Stream.generate(NodeGene::newOutput).limit(outputNodeCount)
-		);
 	}
 	
 	private static Stream<Gene> copyGenes(Collection<Gene> genes)
