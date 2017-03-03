@@ -1,8 +1,6 @@
 package neuroevolution;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -23,28 +21,31 @@ public class Genome
 	
 	public Genome(int inputNodeCount, int outputNodeCount)
 	{
-		this(newNodeGenes(inputNodeCount, outputNodeCount).collect(toList()));
+		this(newNodeGenes(inputNodeCount, outputNodeCount));
 	}
 	
 	public Genome(Gene... genes)
 	{
-		this(asList(genes));
+		this(Stream.of(genes));
 	}
 	
-	public Genome(Collection<Gene> genes)
+	public Genome(Stream<Gene> genes)
 	{
-		checkConnectionGenesNodes(genes);
-		checkConnectionGenesUnique(genes);
+		List<Gene> genesList = genes.collect(toList());
+		checkConnectionGenesNodes(genesList);
+		checkConnectionGenesUnique(genesList);
 		
-		this.genes = new ArrayList<>(genes);
+		this.genes = genesList;
 	}
 	
 	private Genome(Genome that)
 	{
-		this(that.getGenes()
-			.map(Gene::copy)
-			.collect(toList())
-		);
+		this(that.getGenes().map(Gene::copy));
+	}
+	
+	public Genome addGene(Gene gene)
+	{
+		return new Genome(Stream.concat(getGenes(), Stream.of(gene)));
 	}
 	
 	public Stream<Gene> getGenes()
@@ -103,9 +104,7 @@ public class Genome
 		Stream<ConnectionGene> resultConnectionGenes = getConnectionGenes()
 			.map(gene -> gene.mutateWeight(random));
 		
-		return new Genome(Stream.concat(getNodeGenes(), resultConnectionGenes)
-			.collect(toList())
-		);
+		return new Genome(Stream.concat(getNodeGenes(), resultConnectionGenes));
 	}
 	
 	Genome mutateConnections(GeneFactory geneFactory, Random random)
@@ -127,9 +126,7 @@ public class Genome
 		
 		ConnectionGene gene = geneFactory.newConnectionGene(input, output, weight);
 		
-		return new Genome(Stream.concat(getGenes(), Stream.of(gene))
-			.collect(toList())
-		);
+		return addGene(gene);
 	}
 	
 	private boolean connects(NodeGene input, NodeGene output)

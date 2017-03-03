@@ -47,44 +47,46 @@ public class GenomeTest
 	@Test
 	public void cannotConnectUnknownNodeGenes()
 	{
+		Genome genome = new Genome(input1);
 		ConnectionGene connectionGene = new ConnectionGene(input1, output, 1.0, 1);
 		
 		thrown.expect(IllegalArgumentException.class);
 		
-		new Genome(input1, connectionGene);
+		genome.addGene(connectionGene);
 	}
 	
 	@Test
 	public void cannotDuplicateConnectionGenes()
 	{
+		Genome genome = new Genome(input1, output)
+			.addGene(new ConnectionGene(input1, output, 0.1, 1));
+		ConnectionGene connectionGene = new ConnectionGene(input1, output, 0.2, 2);
+		
 		thrown.expect(IllegalArgumentException.class);
 		
-		new Genome(input1, output,
-			new ConnectionGene(input1, output, 0.1, 1),
-			new ConnectionGene(input1, output, 0.2, 2)
-		);
+		genome.addGene(connectionGene);
 	}
 	
 	@Test
 	public void cannotReverseConnectionGenes()
 	{
+		Genome genome = new Genome(input1, output)
+			.addGene(new ConnectionGene(input1, output, 0.1, 1));
+		ConnectionGene connectionGene = new ConnectionGene(output, input1, 0.2, 2);
+		
 		thrown.expect(IllegalArgumentException.class);
 		
-		new Genome(input1, output,
-			new ConnectionGene(input1, output, 0.1, 1),
-			new ConnectionGene(output, input1, 0.2, 2)
-		);
+		genome.addGene(connectionGene);
 	}
 	
 	@Test
 	public void canMutateConnectionWeights()
 	{
 		when(random.nextDouble()).thenReturn(0.4, 0.5, 0.6);
-		Genome genome = new Genome(input1, input2, input3, output,
-			new ConnectionGene(input1, output, 0.1, 1),
-			new ConnectionGene(input2, output, 0.2, 2),
-			new ConnectionGene(input3, output, 0.3, 3)
-		);
+		Genome genome = new Genome(input1, input2, input3, output)
+			.addGene(new ConnectionGene(input1, output, 0.1, 1))
+			.addGene(new ConnectionGene(input2, output, 0.2, 2))
+			.addGene(new ConnectionGene(input3, output, 0.3, 3));
 		
 		Genome result = genome.mutateConnectionWeights(random);
 		
@@ -101,10 +103,9 @@ public class GenomeTest
 		when(random.nextInt(anyInt())).thenReturn(2, 3);
 		when(random.nextDouble()).thenReturn(0.3);
 		GeneFactory geneFactory = new GeneFactory();
-		Genome genome = new Genome(input1, input2, input3, output,
-			geneFactory.newConnectionGene(input1, output, 0.1),
-			geneFactory.newConnectionGene(input2, output, 0.2)
-		);
+		Genome genome = new Genome(input1, input2, input3, output)
+			.addGene(geneFactory.newConnectionGene(input1, output, 0.1))
+			.addGene(geneFactory.newConnectionGene(input2, output, 0.2));
 		
 		Genome result = genome.mutateConnections(geneFactory, random);
 		
