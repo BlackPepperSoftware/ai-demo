@@ -1,13 +1,10 @@
 package neuroevolution;
 
-import static neuroevolution.NodeGene.NodeType.INPUT;
-import static neuroevolution.NodeGene.NodeType.OUTPUT;
-
 public class NodeGene implements Gene
 {
 	private final NodeType type;
 	
-	public enum NodeType
+	private enum NodeType
 	{
 		INPUT,
 		OUTPUT,
@@ -26,12 +23,17 @@ public class NodeGene implements Gene
 	
 	public static NodeGene newInput()
 	{
-		return new NodeGene(INPUT);
+		return new NodeGene(NodeType.INPUT);
 	}
 	
 	public static NodeGene newOutput()
 	{
-		return new NodeGene(OUTPUT);
+		return new NodeGene(NodeType.OUTPUT);
+	}
+	
+	public boolean isInput()
+	{
+		return type == NodeType.INPUT;
 	}
 	
 	@Override

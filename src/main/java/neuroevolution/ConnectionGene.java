@@ -7,20 +7,40 @@ public class ConnectionGene implements Gene
 {
 	private static final double WEIGHT_MUTATION_STEP = 0.1;
 	
+	private final NodeGene input;
+	
+	private final NodeGene output;
+	
 	private final double weight;
 	
 	private final int innovation;
 	
-	ConnectionGene(double weight, int innovation)
+	ConnectionGene(NodeGene input, NodeGene output, double weight, int innovation)
 	{
+		if (input.equals(output))
+		{
+			throw new IllegalArgumentException("Cannot connect node gene to itself");
+		}
+		
+		this.input = input;
+		this.output = output;
 		this.weight = weight;
 		this.innovation = innovation;
 	}
 	
 	private ConnectionGene(ConnectionGene that)
 	{
-		weight = that.weight;
-		innovation = that.innovation;
+		this(that.input, that.output, that.weight, that.innovation);
+	}
+	
+	public NodeGene getInput()
+	{
+		return input;
+	}
+	
+	public NodeGene getOutput()
+	{
+		return output;
 	}
 	
 	public double getWeight()
@@ -39,7 +59,7 @@ public class ConnectionGene implements Gene
 		
 		double resultWeight = weight + (2 * random.nextDouble() - 1) * WEIGHT_MUTATION_STEP;
 		
-		return new ConnectionGene(resultWeight, innovation);
+		return new ConnectionGene(input, output, resultWeight, innovation);
 	}
 	
 	@Override
@@ -51,7 +71,7 @@ public class ConnectionGene implements Gene
 	@Override
 	public int hashCode()
 	{
-		return Objects.hash(weight, innovation);
+		return Objects.hash(input, output, weight, innovation);
 	}
 	
 	@Override
@@ -64,13 +84,15 @@ public class ConnectionGene implements Gene
 		
 		ConnectionGene that = (ConnectionGene) object;
 		
-		return Maths.equals(weight, that.weight)
+		return input.equals(that.input)
+			&& output.equals(that.output)
+			&& Maths.equals(weight, that.weight)
 			&& innovation == that.innovation;
 	}
 	
 	@Override
 	public String toString()
 	{
-		return String.format("[w=%f i=%d]", weight, innovation);
+		return String.format("[in=%s out=%s w=%f i=%d]", input, output, weight, innovation);
 	}
 }

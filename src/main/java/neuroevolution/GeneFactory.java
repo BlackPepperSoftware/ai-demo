@@ -9,9 +9,9 @@ public class GeneFactory
 		innovation = 1;
 	}
 	
-	public ConnectionGene newConnectionGene(double weight)
+	public ConnectionGene newConnectionGene(NodeGene input, NodeGene output, double weight)
 	{
-		return new ConnectionGene(weight, nextInnovation());
+		return new ConnectionGene(input, output, weight, nextInnovation());
 	}
 	
 	private int nextInnovation()

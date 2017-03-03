@@ -14,7 +14,7 @@ public class Genome
 {
 	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
 	
-	private static final double ADD_CONNECTION_MUTATION_RATE = 0.5;
+	private static final double CONNECTION_MUTATION_RATE = 0.5;
 
 	private final List<Gene> genes;
 	
@@ -30,6 +30,8 @@ public class Genome
 	
 	public Genome(Collection<Gene> genes)
 	{
+		checkConnectionGenes(genes);
+		
 		this.genes = new ArrayList<>(genes);
 	}
 	
@@ -71,9 +73,9 @@ public class Genome
 			result = result.mutateConnectionWeights(random);
 		}
 		
-		if (random.nextDouble() < ADD_CONNECTION_MUTATION_RATE)
+		if (random.nextDouble() < CONNECTION_MUTATION_RATE)
 		{
-			result = result.addConnection(geneFactory, random);
+			result = result.mutateConnections(geneFactory, random);
 		}
 		
 		// TODO: mutate add node; split existing connection, disable old connection,
@@ -102,12 +104,24 @@ public class Genome
 		);
 	}
 	
-	Genome addConnection(GeneFactory geneFactory, Random random)
+	Genome mutateConnections(GeneFactory geneFactory, Random random)
 	{
-		// TODO: choose random input and output nodes for connection
+		List<NodeGene> nodeGenes = getNodeGenes().collect(toList());
+		if (nodeGenes.isEmpty())
+		{
+			return this;
+		}
+		
+		NodeGene input = nodeGenes.get(random.nextInt(nodeGenes.size()));
+		NodeGene output = nodeGenes.get(random.nextInt(nodeGenes.size()));
+		if (input.equals(output) || output.isInput())
+		{
+			return this;
+		}
+		
 		double weight = random.nextDouble();
 		
-		ConnectionGene gene = geneFactory.newConnectionGene(weight);
+		ConnectionGene gene = geneFactory.newConnectionGene(input, output, weight);
 		
 		return new Genome(Stream.concat(getGenes(), Stream.of(gene))
 			.collect(toList())
@@ -120,5 +134,24 @@ public class Genome
 			Stream.generate(NodeGene::newInput).limit(inputNodeCount),
 			Stream.generate(NodeGene::newOutput).limit(outputNodeCount)
 		);
+	}
+	
+	private static void checkConnectionGenes(Collection<Gene> genes)
+	{
+		List<NodeGene> nodeGenes = genes.stream()
+			.filter(gene -> gene instanceof NodeGene)
+			.map(NodeGene.class::cast)
+			.collect(toList());
+		
+		boolean valid = genes.stream()
+			.filter(gene -> gene instanceof ConnectionGene)
+			.map(ConnectionGene.class::cast)
+			.flatMap(gene -> Stream.of(gene.getInput(), gene.getOutput()))
+			.allMatch(nodeGenes::contains);
+		
+		if (!valid)
+		{
+			throw new IllegalArgumentException("Connection gene references unknown node gene");
+		}
 	}
 }
