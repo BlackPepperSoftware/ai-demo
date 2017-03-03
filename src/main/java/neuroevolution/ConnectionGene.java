@@ -5,8 +5,6 @@ import java.util.Random;
 
 public class ConnectionGene implements Gene
 {
-	private static final double WEIGHT_MUTATION_STEP = 0.1;
-	
 	private final NodeGene input;
 	
 	private final NodeGene output;
@@ -69,15 +67,6 @@ public class ConnectionGene implements Gene
 	public int getInnovation()
 	{
 		return innovation;
-	}
-	
-	public ConnectionGene mutateWeight(Random random)
-	{
-		// TODO: introduce low probability of randomising rather than perturbing
-		
-		double resultWeight = weight + (2 * random.nextDouble() - 1) * WEIGHT_MUTATION_STEP;
-		
-		return new ConnectionGene(input, output, resultWeight, enabled, innovation);
 	}
 	
 	@Override

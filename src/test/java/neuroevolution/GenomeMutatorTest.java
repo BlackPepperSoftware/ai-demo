@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import static java.util.stream.Collectors.toList;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -63,6 +64,18 @@ public class GenomeMutatorTest
 		));
 	}
 	
+	@Test
+	public void canMutateConnectionWeight()
+	{
+		when(random.nextDouble()).thenReturn(0.6);
+		ConnectionGene gene = new ConnectionGene(newInput(), newOutput(), 1.0, true, 1);
+		
+		ConnectionGene result = mutator.mutateConnectionWeight(gene);
+		
+		// 1.0 + (2 * 0.6 - 1) * 0.1
+		assertThat(result.getWeight(), is(1.02));
+	}
+
 	@Test
 	public void canMutateConnections()
 	{

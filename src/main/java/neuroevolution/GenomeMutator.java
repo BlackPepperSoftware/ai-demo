@@ -12,6 +12,8 @@ class GenomeMutator
 {
 	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
 	
+	private static final double CONNECTION_WEIGHT_MUTATION_STEP = 0.1;
+	
 	private static final double CONNECTION_MUTATION_RATE = 0.5;
 	
 	private static final double NODE_MUTATION_RATE = 0.5;
@@ -53,9 +55,19 @@ class GenomeMutator
 	Genome mutateConnectionWeights(Genome genome)
 	{
 		Stream<ConnectionGene> resultConnectionGenes = genome.getConnectionGenes()
-			.map(gene -> gene.mutateWeight(random));
+			.map(this::mutateConnectionWeight);
 		
 		return new Genome(Stream.concat(genome.getNodeGenes(), resultConnectionGenes));
+	}
+	
+	ConnectionGene mutateConnectionWeight(ConnectionGene gene)
+	{
+		// TODO: introduce low probability of randomising rather than perturbing
+		
+		double resultWeight = gene.getWeight() + (2 * random.nextDouble() - 1) * CONNECTION_WEIGHT_MUTATION_STEP;
+		
+		return new ConnectionGene(gene.getInput(), gene.getOutput(), resultWeight, gene.isEnabled(),
+			gene.getInnovation());
 	}
 	
 	Genome mutateConnections(Genome genome)
