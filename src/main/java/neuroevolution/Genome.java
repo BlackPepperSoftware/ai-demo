@@ -13,12 +13,6 @@ import static java.util.stream.Collectors.toList;
 
 public class Genome
 {
-	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
-	
-	private static final double CONNECTION_MUTATION_RATE = 0.5;
-	
-	private static final double NODE_MUTATION_RATE = 0.5;
-	
 	private final List<Gene> genes;
 	
 	public Genome(int inputNodeCount, int outputNodeCount)
@@ -69,28 +63,16 @@ public class Genome
 			.map(ConnectionGene.class::cast);
 	}
 	
+	public boolean connects(NodeGene input, NodeGene output)
+	{
+		return getConnectionGenes()
+			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
+			.anyMatch(gene -> gene.equals(new HashSet<>(asList(input, output))));
+	}
+	
 	public Genome mutate(GeneFactory geneFactory, Random random)
 	{
-		Genome result = copy();
-		
-		// TODO: mutate mutation rates?
-		
-		if (random.nextDouble() < CONNECTION_WEIGHT_MUTATION_RATE)
-		{
-			result = result.mutateConnectionWeights(random);
-		}
-		
-		if (random.nextDouble() < CONNECTION_MUTATION_RATE)
-		{
-			result = result.mutateConnections(geneFactory, random);
-		}
-		
-		if (random.nextDouble() < NODE_MUTATION_RATE)
-		{
-			result = result.mutateNodes(random);
-		}
-		
-		return result;
+		return new GenomeMutator(geneFactory, random).mutate(this);
 	}
 	
 	public Genome copy()
@@ -101,51 +83,6 @@ public class Genome
 	public void print(PrintStream out)
 	{
 		out.println("  " + genes);
-	}
-	
-	Genome mutateConnectionWeights(Random random)
-	{
-		Stream<ConnectionGene> resultConnectionGenes = getConnectionGenes()
-			.map(gene -> gene.mutateWeight(random));
-		
-		return new Genome(Stream.concat(getNodeGenes(), resultConnectionGenes));
-	}
-	
-	Genome mutateConnections(GeneFactory geneFactory, Random random)
-	{
-		List<NodeGene> nodeGenes = getNodeGenes().collect(toList());
-		if (nodeGenes.isEmpty())
-		{
-			return this;
-		}
-		
-		NodeGene input = nodeGenes.get(random.nextInt(nodeGenes.size()));
-		NodeGene output = nodeGenes.get(random.nextInt(nodeGenes.size()));
-		if (input.equals(output) || output.isInput() || connects(input, output))
-		{
-			return this;
-		}
-		
-		double weight = random.nextDouble();
-		
-		ConnectionGene gene = geneFactory.newConnectionGene(input, output, weight);
-		
-		return addGene(gene);
-	}
-	
-	Genome mutateNodes(Random random)
-	{
-		// TODO: mutate add node; split existing connection, disable old connection,
-		//       add new connection into new node with weight 1, add new connection out of new node with old weight
-		
-		return this;
-	}
-	
-	private boolean connects(NodeGene input, NodeGene output)
-	{
-		return getConnectionGenes()
-			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
-			.anyMatch(gene -> gene.equals(new HashSet<>(asList(input, output))));
 	}
 	
 	private static Stream<Gene> newNodeGenes(int inputNodeCount, int outputNodeCount)
