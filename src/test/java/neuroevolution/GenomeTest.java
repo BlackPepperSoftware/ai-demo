@@ -40,7 +40,7 @@ public class GenomeTest
 	@Test
 	public void cannotConnectUnknownNodeGenes()
 	{
-		ConnectionGene connectionGene = new ConnectionGene(input, output, 1.0, 1);
+		ConnectionGene connectionGene = connection(1.0, 1);
 		
 		thrown.expect(IllegalArgumentException.class);
 		
@@ -51,18 +51,12 @@ public class GenomeTest
 	public void canMutateConnectionWeights()
 	{
 		when(random.nextDouble()).thenReturn(0.4, 0.5, 0.6);
-		Genome genome = new Genome(input, output,
-			new ConnectionGene(input, output, 0.1, 1),
-			new ConnectionGene(input, output, 0.2, 2),
-			new ConnectionGene(input, output, 0.3, 3)
-		);
+		Genome genome = new Genome(input, output, connection(0.1, 1), connection(0.2, 2), connection(0.3, 3));
 		
 		Genome result = genome.mutateConnectionWeights(random);
 		
 		assertThat(result.getConnectionGenes().collect(toList()), contains(
-			new ConnectionGene(input, output, 0.08, 1),
-			new ConnectionGene(input, output, 0.2, 2),
-			new ConnectionGene(input, output, 0.32, 3)
+			connection(0.08, 1), connection(0.2, 2), connection(0.32, 3)
 		));
 	}
 	
@@ -80,9 +74,12 @@ public class GenomeTest
 		Genome result = genome.mutateConnections(geneFactory, random);
 		
 		assertThat(result.getConnectionGenes().collect(toList()), contains(
-			new ConnectionGene(input, output, 0.1, 1),
-			new ConnectionGene(input, output, 0.2, 2),
-			new ConnectionGene(input, output, 0.3, 3)
+			connection(0.1, 1), connection(0.2, 2), connection(0.3, 3)
 		));
+	}
+	
+	private ConnectionGene connection(double weight, int innovation)
+	{
+		return new ConnectionGene(input, output, weight, innovation);
 	}
 }
