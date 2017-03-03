@@ -49,15 +49,15 @@ public class Genome
 		return new Genome(Stream.concat(getGenes(), Stream.of(gene)));
 	}
 	
-	public Genome disableGene(ConnectionGene gene)
+	public Genome disableGene(ConnectionGene connection)
 	{
-		if (!genes.contains(gene))
+		if (!genes.contains(connection))
 		{
 			throw new IllegalArgumentException("Unknown gene");
 		}
 		
 		return new Genome(genes.stream()
-			.map(g -> g.equals(gene) ? ((ConnectionGene) g).disable() : g)
+			.map(gene -> gene.equals(connection) ? ((ConnectionGene) gene).disable() : gene)
 		);
 	}
 	
@@ -108,29 +108,32 @@ public class Genome
 	
 	private static Stream<Gene> copyGenes(Collection<Gene> genes)
 	{
-		Map<NodeGene, NodeGene> resultNodeGenesByOriginal = getNodeGenes(genes)
+		Map<NodeGene, NodeGene> newNodesByOriginal = getNodeGenes(genes)
 			.collect(toMap(gene -> gene, NodeGene::copy, throwingMerger(), LinkedHashMap::new));
 		
-		Stream<ConnectionGene> resultConnectionGenes = getConnectionGenes(genes)
-			.map(gene -> new ConnectionGene(
-				resultNodeGenesByOriginal.get(gene.getInput()),
-				resultNodeGenesByOriginal.get(gene.getOutput()),
-				gene.getWeight(),
-				gene.isEnabled(),
-				gene.getInnovation()
-			));
+		Stream<ConnectionGene> newConnections = getConnectionGenes(genes)
+			.map(connection -> copyConnectionGene(connection, newNodesByOriginal));
 		
-		return Stream.concat(resultNodeGenesByOriginal.values().stream(), resultConnectionGenes);
+		return Stream.concat(newNodesByOriginal.values().stream(), newConnections);
+	}
+	
+	private static ConnectionGene copyConnectionGene(ConnectionGene connection, Map<NodeGene, NodeGene> nodeMap)
+	{
+		NodeGene newInput = nodeMap.get(connection.getInput());
+		NodeGene newOutput = nodeMap.get(connection.getOutput());
+		
+		return new ConnectionGene(newInput, newOutput, connection.getWeight(), connection.isEnabled(),
+			connection.getInnovation());
 	}
 	
 	private static void checkConnectionGenesNodes(Collection<Gene> genes)
 	{
-		List<NodeGene> nodeGenes = getNodeGenes(genes)
+		List<NodeGene> nodes = getNodeGenes(genes)
 			.collect(toList());
 		
 		boolean valid = getConnectionGenes(genes)
 			.flatMap(gene -> Stream.of(gene.getInput(), gene.getOutput()))
-			.allMatch(nodeGenes::contains);
+			.allMatch(nodes::contains);
 		
 		if (!valid)
 		{
@@ -140,11 +143,11 @@ public class Genome
 	
 	private static void checkConnectionGenesUnique(Collection<Gene> genes)
 	{
-		List<Set<NodeGene>> connectionGeneNodes = getConnectionGenes(genes)
+		List<Set<NodeGene>> connectionNodes = getConnectionGenes(genes)
 			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
 			.collect(toList());
 		
-		boolean unique = connectionGeneNodes.size() == connectionGeneNodes.stream().distinct().count();
+		boolean unique = connectionNodes.size() == connectionNodes.stream().distinct().count();
 		
 		if (!unique)
 		{

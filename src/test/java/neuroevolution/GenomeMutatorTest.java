@@ -68,9 +68,9 @@ public class GenomeMutatorTest
 	public void canMutateConnectionWeight()
 	{
 		when(random.nextDouble()).thenReturn(0.6);
-		ConnectionGene gene = new ConnectionGene(newInput(), newOutput(), 1.0, true, 1);
+		ConnectionGene connection = new ConnectionGene(newInput(), newOutput(), 1.0, true, 1);
 		
-		ConnectionGene result = mutator.mutateConnectionWeight(gene);
+		ConnectionGene result = mutator.mutateConnectionWeight(connection);
 		
 		// 1.0 + (2 * 0.6 - 1) * 0.1
 		assertThat(result.getWeight(), is(1.02));

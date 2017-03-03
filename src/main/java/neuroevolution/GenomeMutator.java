@@ -54,62 +54,61 @@ class GenomeMutator
 	
 	Genome mutateConnectionWeights(Genome genome)
 	{
-		Stream<ConnectionGene> resultConnectionGenes = genome.getConnectionGenes()
+		Stream<ConnectionGene> connections = genome.getConnectionGenes()
 			.map(this::mutateConnectionWeight);
 		
-		return new Genome(Stream.concat(genome.getNodeGenes(), resultConnectionGenes));
+		return new Genome(Stream.concat(genome.getNodeGenes(), connections));
 	}
 	
-	ConnectionGene mutateConnectionWeight(ConnectionGene gene)
+	ConnectionGene mutateConnectionWeight(ConnectionGene connection)
 	{
 		// TODO: introduce low probability of randomising rather than perturbing
 		
-		double resultWeight = gene.getWeight() + (2 * random.nextDouble() - 1) * CONNECTION_WEIGHT_MUTATION_STEP;
+		double newWeight = connection.getWeight() + (2 * random.nextDouble() - 1) * CONNECTION_WEIGHT_MUTATION_STEP;
 		
-		return new ConnectionGene(gene.getInput(), gene.getOutput(), resultWeight, gene.isEnabled(),
-			gene.getInnovation());
+		return new ConnectionGene(connection.getInput(), connection.getOutput(), newWeight, connection.isEnabled(),
+			connection.getInnovation());
 	}
 	
 	Genome mutateConnections(Genome genome)
 	{
-		List<NodeGene> nodeGenes = genome.getNodeGenes().collect(toList());
-		if (nodeGenes.isEmpty())
+		List<NodeGene> nodes = genome.getNodeGenes()
+			.collect(toList());
+		
+		if (nodes.isEmpty())
 		{
 			return genome;
 		}
 		
-		NodeGene input = nodeGenes.get(random.nextInt(nodeGenes.size()));
-		NodeGene output = nodeGenes.get(random.nextInt(nodeGenes.size()));
+		NodeGene input = nodes.get(random.nextInt(nodes.size()));
+		NodeGene output = nodes.get(random.nextInt(nodes.size()));
+		
 		if (input.equals(output) || output.isInput() || genome.connects(input, output))
 		{
 			return genome;
 		}
 		
-		double weight = random.nextDouble();
+		double newWeight = random.nextDouble();
 		
-		ConnectionGene gene = geneFactory.newConnectionGene(input, output, weight);
-		
-		return genome.addGene(gene);
+		return genome.addGene(geneFactory.newConnectionGene(input, output, newWeight));
 	}
 	
 	Genome mutateNodes(Genome genome)
 	{
-		List<ConnectionGene> connectionGenes = genome.getConnectionGenes().collect(toList());
-		if (connectionGenes.isEmpty())
+		List<ConnectionGene> connections = genome.getConnectionGenes()
+			.collect(toList());
+		
+		if (connections.isEmpty())
 		{
 			return genome;
 		}
 		
-		ConnectionGene oldConnectionGene = connectionGenes.get(random.nextInt(connectionGenes.size()));
+		ConnectionGene connection = connections.get(random.nextInt(connections.size()));
+		NodeGene newNode = newHidden();
 		
-		NodeGene newNodeGene = newHidden();
-		ConnectionGene newConnectionGene1 = geneFactory.newConnectionGene(oldConnectionGene.getInput(), newNodeGene, 1);
-		ConnectionGene newConnectionGene2 = geneFactory.newConnectionGene(newNodeGene, oldConnectionGene.getOutput(),
-			oldConnectionGene.getWeight());
-		
-		return genome.disableGene(oldConnectionGene)
-			.addGene(newNodeGene)
-			.addGene(newConnectionGene1)
-			.addGene(newConnectionGene2);
+		return genome.disableGene(connection)
+			.addGene(newNode)
+			.addGene(geneFactory.newConnectionGene(connection.getInput(), newNode, 1))
+			.addGene(geneFactory.newConnectionGene(newNode, connection.getOutput(), connection.getWeight()));
 	}
 }

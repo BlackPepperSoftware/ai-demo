@@ -40,22 +40,22 @@ public class GenomeTest
 		Genome result = genome.copy();
 		
 		List<Gene> resultGenes = result.getGenes().collect(toList());
-		NodeGene resultNodeGene1 = (NodeGene) resultGenes.get(0);
-		NodeGene resultNodeGene2 = (NodeGene) resultGenes.get(1);
-		assertThat(resultNodeGene1.isInput(), is(true));
-		assertThat(resultNodeGene2.isOutput(), is(true));
-		assertThat(resultGenes.get(2), is(new ConnectionGene(resultNodeGene1, resultNodeGene2, 0.5, true, 1)));
+		NodeGene resultNode1 = (NodeGene) resultGenes.get(0);
+		NodeGene resultNode2 = (NodeGene) resultGenes.get(1);
+		assertThat(resultNode1.isInput(), is(true));
+		assertThat(resultNode2.isOutput(), is(true));
+		assertThat(resultGenes.get(2), is(new ConnectionGene(resultNode1, resultNode2, 0.5, true, 1)));
 	}
 	
 	@Test
 	public void cannotConnectUnknownNodeGenes()
 	{
 		Genome genome = new Genome(input);
-		ConnectionGene connectionGene = new ConnectionGene(input, output, 1.0, true, 1);
+		ConnectionGene connection = new ConnectionGene(input, output, 1.0, true, 1);
 		
 		thrown.expect(IllegalArgumentException.class);
 		
-		genome.addGene(connectionGene);
+		genome.addGene(connection);
 	}
 	
 	@Test
@@ -63,11 +63,11 @@ public class GenomeTest
 	{
 		Genome genome = new Genome(input, output)
 			.addGene(new ConnectionGene(input, output, 0.1, true, 1));
-		ConnectionGene connectionGene = new ConnectionGene(input, output, 0.2, true, 2);
+		ConnectionGene connection = new ConnectionGene(input, output, 0.2, true, 2);
 		
 		thrown.expect(IllegalArgumentException.class);
 		
-		genome.addGene(connectionGene);
+		genome.addGene(connection);
 	}
 	
 	@Test
@@ -75,10 +75,10 @@ public class GenomeTest
 	{
 		Genome genome = new Genome(input, output)
 			.addGene(new ConnectionGene(input, output, 0.1, true, 1));
-		ConnectionGene connectionGene = new ConnectionGene(output, input, 0.2, true, 2);
+		ConnectionGene connection = new ConnectionGene(output, input, 0.2, true, 2);
 		
 		thrown.expect(IllegalArgumentException.class);
 		
-		genome.addGene(connectionGene);
+		genome.addGene(connection);
 	}
 }
