@@ -31,6 +31,11 @@ public class NodeGene implements Gene
 		return new NodeGene(NodeType.OUTPUT);
 	}
 	
+	public static NodeGene newHidden()
+	{
+		return new NodeGene(NodeType.HIDDEN);
+	}
+	
 	public boolean isInput()
 	{
 		return type == NodeType.INPUT;

@@ -2,9 +2,12 @@ package neuroevolution;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
@@ -30,7 +33,8 @@ public class Genome
 	
 	public Genome(Collection<Gene> genes)
 	{
-		checkConnectionGenes(genes);
+		checkConnectionGenesNodes(genes);
+		checkConnectionGenesUnique(genes);
 		
 		this.genes = new ArrayList<>(genes);
 	}
@@ -114,7 +118,7 @@ public class Genome
 		
 		NodeGene input = nodeGenes.get(random.nextInt(nodeGenes.size()));
 		NodeGene output = nodeGenes.get(random.nextInt(nodeGenes.size()));
-		if (input.equals(output) || output.isInput())
+		if (input.equals(output) || output.isInput() || connects(input, output))
 		{
 			return this;
 		}
@@ -128,6 +132,13 @@ public class Genome
 		);
 	}
 	
+	private boolean connects(NodeGene input, NodeGene output)
+	{
+		return getConnectionGenes()
+			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
+			.anyMatch(gene -> gene.equals(new HashSet<>(asList(input, output))));
+	}
+	
 	private static Stream<Gene> newNodeGenes(int inputNodeCount, int outputNodeCount)
 	{
 		return Stream.concat(
@@ -136,7 +147,7 @@ public class Genome
 		);
 	}
 	
-	private static void checkConnectionGenes(Collection<Gene> genes)
+	private static void checkConnectionGenesNodes(Collection<Gene> genes)
 	{
 		List<NodeGene> nodeGenes = genes.stream()
 			.filter(gene -> gene instanceof NodeGene)
@@ -152,6 +163,22 @@ public class Genome
 		if (!valid)
 		{
 			throw new IllegalArgumentException("Connection gene references unknown node gene");
+		}
+	}
+	
+	private static void checkConnectionGenesUnique(Collection<Gene> genes)
+	{
+		List<Set<NodeGene>> connectionGeneNodes = genes.stream()
+			.filter(gene -> gene instanceof ConnectionGene)
+			.map(ConnectionGene.class::cast)
+			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
+			.collect(toList());
+		
+		boolean unique = connectionGeneNodes.size() == connectionGeneNodes.stream().distinct().count();
+		
+		if (!unique)
+		{
+			throw new IllegalArgumentException("Duplicate connection genes");
 		}
 	}
 }

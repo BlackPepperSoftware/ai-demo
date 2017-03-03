@@ -22,7 +22,11 @@ public class GenomeTest
 {
 	private Random random;
 	
-	private NodeGene input;
+	private NodeGene input1;
+	
+	private NodeGene input2;
+	
+	private NodeGene input3;
 	
 	private NodeGene output;
 	
@@ -33,53 +37,81 @@ public class GenomeTest
 	public void setUp()
 	{
 		random = mock(Random.class);
-		input = newInput();
+		
+		input1 = newInput();
+		input2 = newInput();
+		input3 = newInput();
 		output = newOutput();
 	}
 	
 	@Test
 	public void cannotConnectUnknownNodeGenes()
 	{
-		ConnectionGene connectionGene = connection(1.0, 1);
+		ConnectionGene connectionGene = new ConnectionGene(input1, output, 1.0, 1);
 		
 		thrown.expect(IllegalArgumentException.class);
 		
-		new Genome(input, connectionGene);
+		new Genome(input1, connectionGene);
+	}
+	
+	@Test
+	public void cannotDuplicateConnectionGenes()
+	{
+		thrown.expect(IllegalArgumentException.class);
+		
+		new Genome(input1, output,
+			new ConnectionGene(input1, output, 0.1, 1),
+			new ConnectionGene(input1, output, 0.2, 2)
+		);
+	}
+	
+	@Test
+	public void cannotReverseConnectionGenes()
+	{
+		thrown.expect(IllegalArgumentException.class);
+		
+		new Genome(input1, output,
+			new ConnectionGene(input1, output, 0.1, 1),
+			new ConnectionGene(output, input1, 0.2, 2)
+		);
 	}
 	
 	@Test
 	public void canMutateConnectionWeights()
 	{
 		when(random.nextDouble()).thenReturn(0.4, 0.5, 0.6);
-		Genome genome = new Genome(input, output, connection(0.1, 1), connection(0.2, 2), connection(0.3, 3));
+		Genome genome = new Genome(input1, input2, input3, output,
+			new ConnectionGene(input1, output, 0.1, 1),
+			new ConnectionGene(input2, output, 0.2, 2),
+			new ConnectionGene(input3, output, 0.3, 3)
+		);
 		
 		Genome result = genome.mutateConnectionWeights(random);
 		
 		assertThat(result.getConnectionGenes().collect(toList()), contains(
-			connection(0.08, 1), connection(0.2, 2), connection(0.32, 3)
+			new ConnectionGene(input1, output, 0.08, 1),
+			new ConnectionGene(input2, output, 0.2, 2),
+			new ConnectionGene(input3, output, 0.32, 3)
 		));
 	}
 	
 	@Test
 	public void canMutateConnections()
 	{
-		when(random.nextInt(anyInt())).thenReturn(0, 1);
+		when(random.nextInt(anyInt())).thenReturn(2, 3);
 		when(random.nextDouble()).thenReturn(0.3);
 		GeneFactory geneFactory = new GeneFactory();
-		Genome genome = new Genome(input, output,
-			geneFactory.newConnectionGene(input, output, 0.1),
-			geneFactory.newConnectionGene(input, output, 0.2)
+		Genome genome = new Genome(input1, input2, input3, output,
+			geneFactory.newConnectionGene(input1, output, 0.1),
+			geneFactory.newConnectionGene(input2, output, 0.2)
 		);
 		
 		Genome result = genome.mutateConnections(geneFactory, random);
 		
 		assertThat(result.getConnectionGenes().collect(toList()), contains(
-			connection(0.1, 1), connection(0.2, 2), connection(0.3, 3)
+			new ConnectionGene(input1, output, 0.1, 1),
+			new ConnectionGene(input2, output, 0.2, 2),
+			new ConnectionGene(input3, output, 0.3, 3)
 		));
-	}
-	
-	private ConnectionGene connection(double weight, int innovation)
-	{
-		return new ConnectionGene(input, output, weight, innovation);
 	}
 }
