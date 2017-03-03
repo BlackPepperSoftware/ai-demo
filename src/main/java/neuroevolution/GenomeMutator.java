@@ -102,15 +102,12 @@ class GenomeMutator
 		
 		ConnectionGene oldConnectionGene = connectionGenes.get(random.nextInt(connectionGenes.size()));
 		
-		Stream<Gene> newGenes = genome.getGenes()
-			.map(gene -> gene.equals(oldConnectionGene) ? oldConnectionGene.disable() : gene);
-		
 		NodeGene newNodeGene = newHidden();
 		ConnectionGene newConnectionGene1 = geneFactory.newConnectionGene(oldConnectionGene.getInput(), newNodeGene, 1);
 		ConnectionGene newConnectionGene2 = geneFactory.newConnectionGene(newNodeGene, oldConnectionGene.getOutput(),
 			oldConnectionGene.getWeight());
 		
-		return new Genome(newGenes)
+		return genome.disableGene(oldConnectionGene)
 			.addGene(newNodeGene)
 			.addGene(newConnectionGene1)
 			.addGene(newConnectionGene2);

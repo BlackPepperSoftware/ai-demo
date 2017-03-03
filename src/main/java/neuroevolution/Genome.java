@@ -49,6 +49,18 @@ public class Genome
 		return new Genome(Stream.concat(getGenes(), Stream.of(gene)));
 	}
 	
+	public Genome disableGene(ConnectionGene gene)
+	{
+		if (!genes.contains(gene))
+		{
+			throw new IllegalArgumentException("Unknown gene");
+		}
+		
+		return new Genome(genes.stream()
+			.map(g -> g.equals(gene) ? ((ConnectionGene) g).disable() : g)
+		);
+	}
+	
 	public Stream<Gene> getGenes()
 	{
 		return genes.stream();
