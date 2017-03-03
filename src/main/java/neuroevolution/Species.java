@@ -36,7 +36,6 @@ public class Species
 	{
 		out.println("Species:");
 		
-		genomes.stream()
-			.forEach(genome -> genome.print(out));
+		genomes.forEach(genome -> genome.print(out));
 	}
 }

@@ -23,8 +23,7 @@ public class Population
 	
 	public void print(PrintStream out)
 	{
-		speciesList.stream()
-			.forEach(species -> species.print(out));
+		speciesList.forEach(species -> species.print(out));
 	}
 	
 	private void addGenome(Genome genome)
