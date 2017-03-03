@@ -115,4 +115,14 @@ public class GenomeTest
 			new ConnectionGene(input3, output, 0.3, 3)
 		));
 	}
+	
+	@Test
+	public void canMutateNodes()
+	{
+		Genome genome = new Genome();
+		
+		Genome result = genome.mutateNodes(random);
+		
+		// TODO: assert
+	}
 }

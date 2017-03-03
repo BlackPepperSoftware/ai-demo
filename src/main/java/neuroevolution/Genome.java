@@ -16,7 +16,9 @@ public class Genome
 	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
 	
 	private static final double CONNECTION_MUTATION_RATE = 0.5;
-
+	
+	private static final double NODE_MUTATION_RATE = 0.5;
+	
 	private final List<Gene> genes;
 	
 	public Genome(int inputNodeCount, int outputNodeCount)
@@ -83,8 +85,10 @@ public class Genome
 			result = result.mutateConnections(geneFactory, random);
 		}
 		
-		// TODO: mutate add node; split existing connection, disable old connection,
-		//       add new connection into new node with weight 1, add new connection out of new node with old weight
+		if (random.nextDouble() < NODE_MUTATION_RATE)
+		{
+			result = result.mutateNodes(random);
+		}
 		
 		return result;
 	}
@@ -127,6 +131,14 @@ public class Genome
 		ConnectionGene gene = geneFactory.newConnectionGene(input, output, weight);
 		
 		return addGene(gene);
+	}
+	
+	Genome mutateNodes(Random random)
+	{
+		// TODO: mutate add node; split existing connection, disable old connection,
+		//       add new connection into new node with weight 1, add new connection out of new node with old weight
+		
+		return this;
 	}
 	
 	private boolean connects(NodeGene input, NodeGene output)
