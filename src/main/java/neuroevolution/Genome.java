@@ -117,8 +117,8 @@ public class Genome
 	private static Stream<Gene> newNodeGenes(int inputNodeCount, int outputNodeCount)
 	{
 		return Stream.concat(
-			Stream.generate(() -> NodeGene.INPUT).limit(inputNodeCount),
-			Stream.generate(() -> NodeGene.OUTPUT).limit(outputNodeCount)
+			Stream.generate(NodeGene::newInput).limit(inputNodeCount),
+			Stream.generate(NodeGene::newOutput).limit(outputNodeCount)
 		);
 	}
 }
