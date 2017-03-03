@@ -7,8 +7,6 @@ public class ConnectionGene implements Gene
 {
 	private static final double WEIGHT_MUTATION_STEP = 0.1;
 	
-	private static final double DOUBLE_EQUALS_DELTA = 0.000001;
-	
 	private final double weight;
 	
 	private final int innovation;
@@ -71,7 +69,7 @@ public class ConnectionGene implements Gene
 		
 		ConnectionGene that = (ConnectionGene) object;
 		
-		return Math.abs(weight - that.weight) < DOUBLE_EQUALS_DELTA
+		return Maths.equals(weight, that.weight)
 			&& innovation == that.innovation;
 	}
 	
