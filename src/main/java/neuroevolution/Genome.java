@@ -30,7 +30,7 @@ public class Genome
 	public Genome(Genome that)
 	{
 		this(that.getGenes()
-			.map(Gene::new)
+			.map(Gene::copy)
 			.collect(toList())
 		);
 	}
@@ -38,6 +38,20 @@ public class Genome
 	public Stream<Gene> getGenes()
 	{
 		return genes.stream();
+	}
+	
+	public Stream<NodeGene> getNodeGenes()
+	{
+		return genes.stream()
+			.filter(gene -> gene instanceof NodeGene)
+			.map(NodeGene.class::cast);
+	}
+	
+	public Stream<ConnectionGene> getConnectionGenes()
+	{
+		return genes.stream()
+			.filter(gene -> gene instanceof ConnectionGene)
+			.map(ConnectionGene.class::cast);
 	}
 	
 	public Genome mutate(GeneFactory geneFactory, Random random)
@@ -64,8 +78,10 @@ public class Genome
 	
 	Genome mutateConnectionWeights(Random random)
 	{
-		return new Genome(getGenes()
-			.map(gene -> gene.mutateConnectionWeight(random))
+		Stream<ConnectionGene> resultConnectionGenes = getConnectionGenes()
+			.map(gene -> gene.mutateConnectionWeight(random));
+		
+		return new Genome(Stream.concat(getNodeGenes(), resultConnectionGenes)
 			.collect(toList())
 		);
 	}
@@ -75,7 +91,7 @@ public class Genome
 		// TODO: choose random input and output nodes for connection
 		double weight = random.nextDouble();
 		
-		Gene gene = geneFactory.newGene(weight);
+		ConnectionGene gene = geneFactory.newConnectionGene(weight);
 		
 		return new Genome(Stream.concat(getGenes(), Stream.of(gene))
 			.collect(toList())

@@ -10,7 +10,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GeneTest
+public class ConnectionGeneTest
 {
 	private Random random;
 	
@@ -24,9 +24,9 @@ public class GeneTest
 	public void canMutateConnectionWeight()
 	{
 		when(random.nextDouble()).thenReturn(0.6);
-		Gene gene = new Gene(1.0, 1);
+		ConnectionGene gene = new ConnectionGene(1.0, 1);
 		
-		Gene result = gene.mutateConnectionWeight(random);
+		ConnectionGene result = gene.mutateConnectionWeight(random);
 		
 		// 1.0 + (2 * 0.6 - 1) * 0.1
 		assertThat(result.getWeight(), is(1.02));
