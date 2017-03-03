@@ -17,6 +17,11 @@ public class Genome
 
 	private final List<Gene> genes;
 	
+	public Genome(int inputNodeCount, int outputNodeCount)
+	{
+		this(newNodeGenes(inputNodeCount, outputNodeCount).collect(toList()));
+	}
+	
 	public Genome(Gene... genes)
 	{
 		this(asList(genes));
@@ -100,6 +105,14 @@ public class Genome
 		
 		return new Genome(Stream.concat(getGenes(), Stream.of(gene))
 			.collect(toList())
+		);
+	}
+	
+	private static Stream<Gene> newNodeGenes(int inputNodeCount, int outputNodeCount)
+	{
+		return Stream.concat(
+			Stream.generate(() -> NodeGene.INPUT).limit(inputNodeCount),
+			Stream.generate(() -> NodeGene.OUTPUT).limit(outputNodeCount)
 		);
 	}
 }

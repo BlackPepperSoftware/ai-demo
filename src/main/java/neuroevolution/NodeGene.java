@@ -1,14 +1,14 @@
 package neuroevolution;
 
-public class NodeGene implements Gene
+public enum NodeGene implements Gene
 {
-	private NodeGene(NodeGene that)
-	{
-	}
+	INPUT,
+	OUTPUT,
+	HIDDEN;
 	
 	@Override
 	public NodeGene copy()
 	{
-		return new NodeGene(this);
+		return this;
 	}
 }

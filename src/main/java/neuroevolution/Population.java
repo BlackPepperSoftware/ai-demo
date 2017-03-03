@@ -10,12 +10,11 @@ public class Population
 {
 	private List<Species> speciesList;
 	
-	public Population(int size, GeneFactory geneFactory, Random random)
+	public Population(int size, int inputNodeCount, int outputNodeCount, GeneFactory geneFactory, Random random)
 	{
 		speciesList = new ArrayList<>();
 		
-		// TODO: set genome neuron count to inputs
-		Stream.generate(Genome::new)
+		Stream.generate(() -> new Genome(inputNodeCount, outputNodeCount))
 			.map(genome -> genome.mutate(geneFactory, random))
 			.limit(size)
 			.forEach(this::addGenome);
