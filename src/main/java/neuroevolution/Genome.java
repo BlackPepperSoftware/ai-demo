@@ -23,7 +23,7 @@ public class Genome
 	
 	public Genome(Genome that)
 	{
-		genes = that.genes.stream()
+		genes = that.getGenes()
 			.map(Gene::new)
 			.collect(toList());
 	}
