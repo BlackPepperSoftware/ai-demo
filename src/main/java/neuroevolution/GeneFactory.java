@@ -11,7 +11,7 @@ public class GeneFactory
 	
 	public ConnectionGene newConnectionGene(NodeGene input, NodeGene output, double weight)
 	{
-		return new ConnectionGene(input, output, weight, nextInnovation());
+		return new ConnectionGene(input, output, weight, true, nextInnovation());
 	}
 	
 	private int nextInnovation()

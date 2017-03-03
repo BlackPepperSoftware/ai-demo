@@ -35,7 +35,7 @@ public class GenomeTest
 	public void canCopyGenome()
 	{
 		Genome genome = new Genome(input, output)
-			.addGene(new ConnectionGene(input, output, 0.5, 1));
+			.addGene(new ConnectionGene(input, output, 0.5, true, 1));
 		
 		Genome result = genome.copy();
 		
@@ -44,14 +44,14 @@ public class GenomeTest
 		NodeGene resultNodeGene2 = (NodeGene) resultGenes.get(1);
 		assertThat(resultNodeGene1.isInput(), is(true));
 		assertThat(resultNodeGene2.isOutput(), is(true));
-		assertThat(resultGenes.get(2), is(new ConnectionGene(resultNodeGene1, resultNodeGene2, 0.5, 1)));
+		assertThat(resultGenes.get(2), is(new ConnectionGene(resultNodeGene1, resultNodeGene2, 0.5, true, 1)));
 	}
 	
 	@Test
 	public void cannotConnectUnknownNodeGenes()
 	{
 		Genome genome = new Genome(input);
-		ConnectionGene connectionGene = new ConnectionGene(input, output, 1.0, 1);
+		ConnectionGene connectionGene = new ConnectionGene(input, output, 1.0, true, 1);
 		
 		thrown.expect(IllegalArgumentException.class);
 		
@@ -62,8 +62,8 @@ public class GenomeTest
 	public void cannotDuplicateConnectionGenes()
 	{
 		Genome genome = new Genome(input, output)
-			.addGene(new ConnectionGene(input, output, 0.1, 1));
-		ConnectionGene connectionGene = new ConnectionGene(input, output, 0.2, 2);
+			.addGene(new ConnectionGene(input, output, 0.1, true, 1));
+		ConnectionGene connectionGene = new ConnectionGene(input, output, 0.2, true, 2);
 		
 		thrown.expect(IllegalArgumentException.class);
 		
@@ -74,8 +74,8 @@ public class GenomeTest
 	public void cannotReverseConnectionGenes()
 	{
 		Genome genome = new Genome(input, output)
-			.addGene(new ConnectionGene(input, output, 0.1, 1));
-		ConnectionGene connectionGene = new ConnectionGene(output, input, 0.2, 2);
+			.addGene(new ConnectionGene(input, output, 0.1, true, 1));
+		ConnectionGene connectionGene = new ConnectionGene(output, input, 0.2, true, 2);
 		
 		thrown.expect(IllegalArgumentException.class);
 		

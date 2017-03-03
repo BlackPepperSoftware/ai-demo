@@ -6,6 +6,8 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
+import static neuroevolution.NodeGene.newHidden;
+
 class GenomeMutator
 {
 	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
@@ -80,9 +82,25 @@ class GenomeMutator
 	
 	Genome mutateNodes(Genome genome)
 	{
-		// TODO: mutate add node; split existing connection, disable old connection,
-		//       add new connection into new node with weight 1, add new connection out of new node with old weight
+		List<ConnectionGene> connectionGenes = genome.getConnectionGenes().collect(toList());
+		if (connectionGenes.isEmpty())
+		{
+			return genome;
+		}
 		
-		return genome;
+		ConnectionGene oldConnectionGene = connectionGenes.get(random.nextInt(connectionGenes.size()));
+		
+		Stream<Gene> newGenes = genome.getGenes()
+			.map(gene -> gene.equals(oldConnectionGene) ? oldConnectionGene.disable() : gene);
+		
+		NodeGene newNodeGene = newHidden();
+		ConnectionGene newConnectionGene1 = geneFactory.newConnectionGene(oldConnectionGene.getInput(), newNodeGene, 1);
+		ConnectionGene newConnectionGene2 = geneFactory.newConnectionGene(newNodeGene, oldConnectionGene.getOutput(),
+			oldConnectionGene.getWeight());
+		
+		return new Genome(newGenes)
+			.addGene(newNodeGene)
+			.addGene(newConnectionGene1)
+			.addGene(newConnectionGene2);
 	}
 }

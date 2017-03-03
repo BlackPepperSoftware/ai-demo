@@ -104,6 +104,7 @@ public class Genome
 				resultNodeGenesByOriginal.get(gene.getInput()),
 				resultNodeGenesByOriginal.get(gene.getOutput()),
 				gene.getWeight(),
+				gene.isEnabled(),
 				gene.getInnovation()
 			));
 		

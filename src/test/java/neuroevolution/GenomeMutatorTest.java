@@ -50,16 +50,16 @@ public class GenomeMutatorTest
 	{
 		when(random.nextDouble()).thenReturn(0.4, 0.5, 0.6);
 		Genome genome = new Genome(input1, input2, input3, output)
-			.addGene(new ConnectionGene(input1, output, 0.1, 1))
-			.addGene(new ConnectionGene(input2, output, 0.2, 2))
-			.addGene(new ConnectionGene(input3, output, 0.3, 3));
+			.addGene(new ConnectionGene(input1, output, 0.1, true, 1))
+			.addGene(new ConnectionGene(input2, output, 0.2, true, 2))
+			.addGene(new ConnectionGene(input3, output, 0.3, true, 3));
 		
 		Genome result = mutator.mutateConnectionWeights(genome);
 		
 		assertThat(result.getConnectionGenes().collect(toList()), contains(
-			new ConnectionGene(input1, output, 0.08, 1),
-			new ConnectionGene(input2, output, 0.2, 2),
-			new ConnectionGene(input3, output, 0.32, 3)
+			new ConnectionGene(input1, output, 0.08, true, 1),
+			new ConnectionGene(input2, output, 0.2, true, 2),
+			new ConnectionGene(input3, output, 0.32, true, 3)
 		));
 	}
 	
@@ -75,19 +75,29 @@ public class GenomeMutatorTest
 		Genome result = mutator.mutateConnections(genome);
 		
 		assertThat(result.getConnectionGenes().collect(toList()), contains(
-			new ConnectionGene(input1, output, 0.1, 1),
-			new ConnectionGene(input2, output, 0.2, 2),
-			new ConnectionGene(input3, output, 0.3, 3)
+			new ConnectionGene(input1, output, 0.1, true, 1),
+			new ConnectionGene(input2, output, 0.2, true, 2),
+			new ConnectionGene(input3, output, 0.3, true, 3)
 		));
 	}
 	
 	@Test
 	public void canMutateNodes()
 	{
-		Genome genome = new Genome();
+		when(random.nextInt(anyInt())).thenReturn(1);
+		Genome genome = new Genome(input1, input2, output)
+			.addGene(geneFactory.newConnectionGene(input1, output, 0.1))
+			.addGene(geneFactory.newConnectionGene(input2, output, 0.2));
 		
 		Genome result = mutator.mutateNodes(genome);
-		
-		// TODO: assert
+
+		NodeGene resultNewNode = result.getNodeGenes().collect(toList()).get(3);
+		assertThat(result.getNodeGenes().collect(toList()), contains(input1, input2, output, resultNewNode));
+		assertThat(result.getConnectionGenes().collect(toList()), contains(
+			new ConnectionGene(input1, output, 0.1, true, 1),
+			new ConnectionGene(input2, output, 0.2, false, 2),
+			new ConnectionGene(input2, resultNewNode, 1.0, true, 3),
+			new ConnectionGene(resultNewNode, output, 0.2, true, 4)
+		));
 	}
 }

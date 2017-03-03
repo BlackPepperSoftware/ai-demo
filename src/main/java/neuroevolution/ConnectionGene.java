@@ -13,9 +13,11 @@ public class ConnectionGene implements Gene
 	
 	private final double weight;
 	
+	private final boolean enabled;
+	
 	private final int innovation;
 	
-	ConnectionGene(NodeGene input, NodeGene output, double weight, int innovation)
+	ConnectionGene(NodeGene input, NodeGene output, double weight, boolean enabled, int innovation)
 	{
 		if (input.equals(output))
 		{
@@ -25,12 +27,13 @@ public class ConnectionGene implements Gene
 		this.input = input;
 		this.output = output;
 		this.weight = weight;
+		this.enabled = enabled;
 		this.innovation = innovation;
 	}
 	
 	private ConnectionGene(ConnectionGene that)
 	{
-		this(that.input, that.output, that.weight, that.innovation);
+		this(that.input, that.output, that.weight, that.enabled, that.innovation);
 	}
 	
 	public NodeGene getInput()
@@ -48,6 +51,21 @@ public class ConnectionGene implements Gene
 		return weight;
 	}
 	
+	public boolean isEnabled()
+	{
+		return enabled;
+	}
+	
+	public ConnectionGene disable()
+	{
+		if (!enabled)
+		{
+			throw new IllegalStateException("Connection gene already disabled");
+		}
+		
+		return new ConnectionGene(input, output, weight, false, innovation);
+	}
+	
 	public int getInnovation()
 	{
 		return innovation;
@@ -59,7 +77,7 @@ public class ConnectionGene implements Gene
 		
 		double resultWeight = weight + (2 * random.nextDouble() - 1) * WEIGHT_MUTATION_STEP;
 		
-		return new ConnectionGene(input, output, resultWeight, innovation);
+		return new ConnectionGene(input, output, resultWeight, enabled, innovation);
 	}
 	
 	@Override
@@ -71,7 +89,7 @@ public class ConnectionGene implements Gene
 	@Override
 	public int hashCode()
 	{
-		return Objects.hash(input, output, weight, innovation);
+		return Objects.hash(input, output, weight, enabled, innovation);
 	}
 	
 	@Override
@@ -87,12 +105,13 @@ public class ConnectionGene implements Gene
 		return input.equals(that.input)
 			&& output.equals(that.output)
 			&& Maths.equals(weight, that.weight)
+			&& enabled == that.enabled
 			&& innovation == that.innovation;
 	}
 	
 	@Override
 	public String toString()
 	{
-		return String.format("[in=%s out=%s w=%f i=%d]", input, output, weight, innovation);
+		return String.format("[in=%s out=%s w=%f %d i=%d]", input, output, weight, enabled ? 1 : 0, innovation);
 	}
 }

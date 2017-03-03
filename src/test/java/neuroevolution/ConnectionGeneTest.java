@@ -35,14 +35,14 @@ public class ConnectionGeneTest
 		
 		thrown.expect(IllegalArgumentException.class);
 		
-		new ConnectionGene(node, node, 1.0, 1);
+		new ConnectionGene(node, node, 1.0, true, 1);
 	}
 	
 	@Test
 	public void canMutateWeight()
 	{
 		when(random.nextDouble()).thenReturn(0.6);
-		ConnectionGene gene = new ConnectionGene(newInput(), newOutput(), 1.0, 1);
+		ConnectionGene gene = new ConnectionGene(newInput(), newOutput(), 1.0, true, 1);
 		
 		ConnectionGene result = gene.mutateWeight(random);
 		
