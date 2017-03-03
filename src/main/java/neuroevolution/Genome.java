@@ -1,31 +1,36 @@
 package neuroevolution;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Random;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 
 public class Genome
 {
+	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
+	
 	private final List<Gene> genes;
 	
 	public Genome(Gene... genes)
 	{
-		this.genes = new ArrayList<>(asList(genes));
+		this(asList(genes));
+	}
+	
+	public Genome(Collection<Gene> genes)
+	{
+		this.genes = new ArrayList<>(genes);
 	}
 	
 	public Genome(Genome that)
 	{
-		genes = that.getGenes()
+		this(that.getGenes()
 			.map(Gene::new)
-			.collect(toList());
+			.collect(toList())
+		);
 	}
 	
 	public Stream<Gene> getGenes()
@@ -33,12 +38,29 @@ public class Genome
 		return genes.stream();
 	}
 	
-	public Genome mutate()
+	public Genome mutate(Random random)
 	{
-		Genome genome = new Genome(this);
+		Genome result = new Genome(this);
 		
-		// TODO: mutate
+		// TODO: mutate mutation rates?
 		
-		return genome;
+		if (random.nextDouble() < CONNECTION_WEIGHT_MUTATION_RATE)
+		{
+			result = result.mutateConnectionWeights(random);
+		}
+		
+		// TODO: mutate add connection; random weight, connect two existing nodes
+		// TODO: mutate add node; split existing connection, disable old connection,
+		//       add new connection into new node with weight 1, add new connection out of new node with old weight
+		
+		return result;
+	}
+	
+	Genome mutateConnectionWeights(Random random)
+	{
+		return new Genome(getGenes()
+			.map(gene -> gene.mutateConnectionWeight(random))
+			.collect(toList())
+		);
 	}
 }
