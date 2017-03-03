@@ -21,12 +21,12 @@ public class ConnectionGeneTest
 	}
 	
 	@Test
-	public void canMutateConnectionWeight()
+	public void canMutateWeight()
 	{
 		when(random.nextDouble()).thenReturn(0.6);
 		ConnectionGene gene = new ConnectionGene(1.0, 1);
 		
-		ConnectionGene result = gene.mutateConnectionWeight(random);
+		ConnectionGene result = gene.mutateWeight(random);
 		
 		// 1.0 + (2 * 0.6 - 1) * 0.1
 		assertThat(result.getWeight(), is(1.02));

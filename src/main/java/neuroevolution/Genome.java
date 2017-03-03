@@ -79,7 +79,7 @@ public class Genome
 	Genome mutateConnectionWeights(Random random)
 	{
 		Stream<ConnectionGene> resultConnectionGenes = getConnectionGenes()
-			.map(gene -> gene.mutateConnectionWeight(random));
+			.map(gene -> gene.mutateWeight(random));
 		
 		return new Genome(Stream.concat(getNodeGenes(), resultConnectionGenes)
 			.collect(toList())

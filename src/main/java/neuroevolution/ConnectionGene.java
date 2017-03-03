@@ -33,7 +33,7 @@ public class ConnectionGene implements Gene
 		return innovation;
 	}
 	
-	public ConnectionGene mutateConnectionWeight(Random random)
+	public ConnectionGene mutateWeight(Random random)
 	{
 		// TODO: introduce low probability of randomising rather than perturbing
 		
