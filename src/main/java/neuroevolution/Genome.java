@@ -3,13 +3,18 @@ package neuroevolution;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public class Genome
 {
@@ -36,7 +41,7 @@ public class Genome
 	
 	private Genome(Genome that)
 	{
-		this(that.getGenes().map(Gene::copy));
+		this(copyGenes(that.getGenes().collect(toList())));
 	}
 	
 	public Genome addGene(Gene gene)
@@ -51,16 +56,12 @@ public class Genome
 	
 	public Stream<NodeGene> getNodeGenes()
 	{
-		return genes.stream()
-			.filter(gene -> gene instanceof NodeGene)
-			.map(NodeGene.class::cast);
+		return getNodeGenes(genes);
 	}
 	
 	public Stream<ConnectionGene> getConnectionGenes()
 	{
-		return genes.stream()
-			.filter(gene -> gene instanceof ConnectionGene)
-			.map(ConnectionGene.class::cast);
+		return getConnectionGenes(genes);
 	}
 	
 	public boolean connects(NodeGene input, NodeGene output)
@@ -93,16 +94,28 @@ public class Genome
 		);
 	}
 	
+	private static Stream<Gene> copyGenes(Collection<Gene> genes)
+	{
+		Map<NodeGene, NodeGene> resultNodeGenesByOriginal = getNodeGenes(genes)
+			.collect(toMap(gene -> gene, NodeGene::copy, throwingMerger(), LinkedHashMap::new));
+		
+		Stream<ConnectionGene> resultConnectionGenes = getConnectionGenes(genes)
+			.map(gene -> new ConnectionGene(
+				resultNodeGenesByOriginal.get(gene.getInput()),
+				resultNodeGenesByOriginal.get(gene.getOutput()),
+				gene.getWeight(),
+				gene.getInnovation()
+			));
+		
+		return Stream.concat(resultNodeGenesByOriginal.values().stream(), resultConnectionGenes);
+	}
+	
 	private static void checkConnectionGenesNodes(Collection<Gene> genes)
 	{
-		List<NodeGene> nodeGenes = genes.stream()
-			.filter(gene -> gene instanceof NodeGene)
-			.map(NodeGene.class::cast)
+		List<NodeGene> nodeGenes = getNodeGenes(genes)
 			.collect(toList());
 		
-		boolean valid = genes.stream()
-			.filter(gene -> gene instanceof ConnectionGene)
-			.map(ConnectionGene.class::cast)
+		boolean valid = getConnectionGenes(genes)
 			.flatMap(gene -> Stream.of(gene.getInput(), gene.getOutput()))
 			.allMatch(nodeGenes::contains);
 		
@@ -114,9 +127,7 @@ public class Genome
 	
 	private static void checkConnectionGenesUnique(Collection<Gene> genes)
 	{
-		List<Set<NodeGene>> connectionGeneNodes = genes.stream()
-			.filter(gene -> gene instanceof ConnectionGene)
-			.map(ConnectionGene.class::cast)
+		List<Set<NodeGene>> connectionGeneNodes = getConnectionGenes(genes)
 			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
 			.collect(toList());
 		
@@ -126,5 +137,29 @@ public class Genome
 		{
 			throw new IllegalArgumentException("Duplicate connection genes");
 		}
+	}
+	
+	private static Stream<NodeGene> getNodeGenes(Collection<Gene> genes)
+	{
+		return genes.stream()
+			.filter(gene -> gene instanceof NodeGene)
+			.map(NodeGene.class::cast);
+	}
+	
+	private static Stream<ConnectionGene> getConnectionGenes(Collection<Gene> genes)
+	{
+		return genes.stream()
+			.filter(gene -> gene instanceof ConnectionGene)
+			.map(ConnectionGene.class::cast);
+	}
+	
+	/**
+	 * @see Collectors#throwingMerger()
+	 */
+	private static <T> BinaryOperator<T> throwingMerger()
+	{
+		return (u, v) -> {
+			throw new IllegalStateException(String.format("Duplicate key %s", u));
+		};
 	}
 }

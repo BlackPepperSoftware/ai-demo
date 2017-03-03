@@ -41,6 +41,11 @@ public class NodeGene implements Gene
 		return type == NodeType.INPUT;
 	}
 	
+	public boolean isOutput()
+	{
+		return type == NodeType.OUTPUT;
+	}
+	
 	@Override
 	public NodeGene copy()
 	{
