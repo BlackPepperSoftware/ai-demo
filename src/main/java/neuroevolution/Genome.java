@@ -1,5 +1,6 @@
 package neuroevolution;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -84,6 +85,11 @@ public class Genome
 	public Genome copy()
 	{
 		return new Genome(this);
+	}
+	
+	public void print(PrintStream out)
+	{
+		out.println("  " + genes);
 	}
 	
 	Genome mutateConnectionWeights(Random random)

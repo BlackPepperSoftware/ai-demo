@@ -71,6 +71,6 @@ public class ConnectionGene implements Gene
 	@Override
 	public String toString()
 	{
-		return String.format("%s[weight=%f, innovation=%d]", getClass().getName(), weight, innovation);
+		return String.format("[w=%f i=%d]", weight, innovation);
 	}
 }

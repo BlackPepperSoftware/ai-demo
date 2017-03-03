@@ -1,5 +1,6 @@
 package neuroevolution;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +19,12 @@ public class Population
 			.map(genome -> genome.mutate(geneFactory, random))
 			.limit(size)
 			.forEach(this::addGenome);
+	}
+	
+	public void print(PrintStream out)
+	{
+		speciesList.stream()
+			.forEach(species -> species.print(out));
 	}
 	
 	private void addGenome(Genome genome)

@@ -1,5 +1,6 @@
 package neuroevolution;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -29,5 +30,13 @@ public class Species
 			.orElseThrow(() -> new IllegalStateException("Empty species"));
 		
 		return new GenomeComparator().compare(someGenome, genome) == 0;
+	}
+	
+	public void print(PrintStream out)
+	{
+		out.println("Species:");
+		
+		genomes.stream()
+			.forEach(genome -> genome.print(out));
 	}
 }

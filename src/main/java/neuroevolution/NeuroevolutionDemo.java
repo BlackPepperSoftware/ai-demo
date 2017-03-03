@@ -6,6 +6,6 @@ public class NeuroevolutionDemo
 	{
 		NeatNetwork neat = new NeatNetwork(2, 1);
 		
-		System.out.println(neat);
+		neat.print(System.out);
 	}
 }
