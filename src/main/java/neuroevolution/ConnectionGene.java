@@ -28,11 +28,6 @@ public class ConnectionGene implements Gene
 		return weight;
 	}
 	
-	public ConnectionGene withWeight(double weight)
-	{
-		return new ConnectionGene(weight, innovation);
-	}
-	
 	public int getInnovation()
 	{
 		return innovation;
@@ -44,7 +39,7 @@ public class ConnectionGene implements Gene
 		
 		double resultWeight = weight + (2 * random.nextDouble() - 1) * WEIGHT_MUTATION_STEP;
 		
-		return withWeight(resultWeight);
+		return new ConnectionGene(resultWeight, innovation);
 	}
 	
 	@Override
