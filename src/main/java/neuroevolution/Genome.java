@@ -27,7 +27,7 @@ public class Genome
 		this.genes = new ArrayList<>(genes);
 	}
 	
-	public Genome(Genome that)
+	private Genome(Genome that)
 	{
 		this(that.getGenes()
 			.map(Gene::copy)
@@ -56,7 +56,7 @@ public class Genome
 	
 	public Genome mutate(GeneFactory geneFactory, Random random)
 	{
-		Genome result = new Genome(this);
+		Genome result = copy();
 		
 		// TODO: mutate mutation rates?
 		
@@ -74,6 +74,11 @@ public class Genome
 		//       add new connection into new node with weight 1, add new connection out of new node with old weight
 		
 		return result;
+	}
+	
+	public Genome copy()
+	{
+		return new Genome(this);
 	}
 	
 	Genome mutateConnectionWeights(Random random)
