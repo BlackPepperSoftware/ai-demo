@@ -13,7 +13,7 @@ public class Gene
 	
 	private final int innovation;
 	
-	public Gene(double weight, int innovation)
+	Gene(double weight, int innovation)
 	{
 		this.weight = weight;
 		this.innovation = innovation;
@@ -30,6 +30,11 @@ public class Gene
 		return weight;
 	}
 	
+	public Gene withWeight(double weight)
+	{
+		return new Gene(weight, innovation);
+	}
+	
 	public int getInnovation()
 	{
 		return innovation;
@@ -41,7 +46,7 @@ public class Gene
 		
 		double resultWeight = weight + (2 * random.nextDouble() - 1) * WEIGHT_MUTATION_STEP;
 		
-		return new Gene(resultWeight, innovation);
+		return withWeight(resultWeight);
 	}
 	
 	@Override

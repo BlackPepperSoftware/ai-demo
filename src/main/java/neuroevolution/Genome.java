@@ -13,6 +13,8 @@ public class Genome
 {
 	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
 	
+	private static final double ADD_CONNECTION_MUTATION_RATE = 0.5;
+
 	private final List<Gene> genes;
 	
 	public Genome(Gene... genes)
@@ -38,7 +40,7 @@ public class Genome
 		return genes.stream();
 	}
 	
-	public Genome mutate(Random random)
+	public Genome mutate(GeneFactory geneFactory, Random random)
 	{
 		Genome result = new Genome(this);
 		
@@ -49,7 +51,11 @@ public class Genome
 			result = result.mutateConnectionWeights(random);
 		}
 		
-		// TODO: mutate add connection; random weight, connect two existing nodes
+		if (random.nextDouble() < ADD_CONNECTION_MUTATION_RATE)
+		{
+			result = result.addConnection(geneFactory, random);
+		}
+		
 		// TODO: mutate add node; split existing connection, disable old connection,
 		//       add new connection into new node with weight 1, add new connection out of new node with old weight
 		
@@ -60,6 +66,18 @@ public class Genome
 	{
 		return new Genome(getGenes()
 			.map(gene -> gene.mutateConnectionWeight(random))
+			.collect(toList())
+		);
+	}
+	
+	Genome addConnection(GeneFactory geneFactory, Random random)
+	{
+		// TODO: choose random input and output nodes for connection
+		double weight = random.nextDouble();
+		
+		Gene gene = geneFactory.newGene(weight);
+		
+		return new Genome(Stream.concat(getGenes(), Stream.of(gene))
 			.collect(toList())
 		);
 	}

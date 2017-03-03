@@ -8,6 +8,6 @@ public class NeatNetwork
 	
 	public NeatNetwork()
 	{
-		population = new Population(10, new Random());
+		population = new Population(10, new GeneFactory(), new Random());
 	}
 }
