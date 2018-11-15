@@ -1,8 +1,6 @@
-# AI Demo
+# Neuroevolution
 
-Learning some artificial intelligence techniques:
-
-* [Neuroevolution](src/main/java/uk/co/blackpepper/neuroevolution)
+Java implementation of [NEAT](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf) for unsupervised learning of games.
 
 ## See also
 
