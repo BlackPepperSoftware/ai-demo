@@ -1,10 +1,10 @@
-package neuroevolution;
+package uk.co.blackpepper.neuroevolution;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static neuroevolution.NodeGene.newInput;
+import static uk.co.blackpepper.neuroevolution.NodeGene.newInput;
 
 public class ConnectionGeneTest
 {

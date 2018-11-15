@@ -1,4 +1,4 @@
-package neuroevolution;
+package uk.co.blackpepper.neuroevolution;
 
 import java.util.Random;
 
@@ -14,8 +14,8 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static neuroevolution.NodeGene.newInput;
-import static neuroevolution.NodeGene.newOutput;
+import static uk.co.blackpepper.neuroevolution.NodeGene.newInput;
+import static uk.co.blackpepper.neuroevolution.NodeGene.newOutput;
 
 public class GenomeMutatorTest
 {

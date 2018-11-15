@@ -1,4 +1,4 @@
-package neuroevolution;
+package uk.co.blackpepper.neuroevolution;
 
 import java.io.PrintStream;
 import java.util.ArrayList;

@@ -2,7 +2,7 @@
 
 Learning some artificial intelligence techniques:
 
-* [Neuroevolution](src/main/java/neuroevolution)
+* [Neuroevolution](src/main/java/uk/co/blackpepper/neuroevolution)
 
 ## See also
 

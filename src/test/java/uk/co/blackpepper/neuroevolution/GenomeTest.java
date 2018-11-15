@@ -1,4 +1,4 @@
-package neuroevolution;
+package uk.co.blackpepper.neuroevolution;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import static neuroevolution.NodeGene.newInput;
-import static neuroevolution.NodeGene.newOutput;
+import static uk.co.blackpepper.neuroevolution.NodeGene.newInput;
+import static uk.co.blackpepper.neuroevolution.NodeGene.newOutput;
 
 public class GenomeTest
 {

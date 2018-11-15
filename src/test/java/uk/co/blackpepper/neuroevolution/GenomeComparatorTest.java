@@ -1,4 +1,4 @@
-package neuroevolution;
+package uk.co.blackpepper.neuroevolution;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -6,9 +6,9 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import static neuroevolution.NodeGene.newHidden;
-import static neuroevolution.NodeGene.newInput;
-import static neuroevolution.NodeGene.newOutput;
+import static uk.co.blackpepper.neuroevolution.NodeGene.newHidden;
+import static uk.co.blackpepper.neuroevolution.NodeGene.newInput;
+import static uk.co.blackpepper.neuroevolution.NodeGene.newOutput;
 
 public class GenomeComparatorTest
 {

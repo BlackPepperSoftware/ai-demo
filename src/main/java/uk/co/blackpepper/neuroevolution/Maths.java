@@ -1,4 +1,4 @@
-package neuroevolution;
+package uk.co.blackpepper.neuroevolution;
 
 final class Maths
 {

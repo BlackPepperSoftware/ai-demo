@@ -1,4 +1,4 @@
-package neuroevolution;
+package uk.co.blackpepper.neuroevolution;
 
 import java.util.List;
 import java.util.Random;
@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-import static neuroevolution.NodeGene.newHidden;
+import static uk.co.blackpepper.neuroevolution.NodeGene.newHidden;
 
 class GenomeMutator
 {
