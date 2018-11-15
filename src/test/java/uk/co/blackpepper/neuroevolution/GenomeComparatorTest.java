@@ -10,8 +10,8 @@ import static uk.co.blackpepper.neuroevolution.NodeGene.newHidden;
 import static uk.co.blackpepper.neuroevolution.NodeGene.newInput;
 import static uk.co.blackpepper.neuroevolution.NodeGene.newOutput;
 
-public class GenomeComparatorTest
-{
+public class GenomeComparatorTest {
+	
 	private GenomeComparator comparator;
 	
 	private NodeGene input1;
@@ -27,8 +27,7 @@ public class GenomeComparatorTest
 	private NodeGene output;
 	
 	@Before
-	public void setUp()
-	{
+	public void setUp() {
 		comparator = new GenomeComparator();
 		
 		input1 = newInput();
@@ -40,8 +39,7 @@ public class GenomeComparatorTest
 	}
 	
 	@Test
-	public void canMatchSpeciesWhenNoGenomes()
-	{
+	public void canMatchSpeciesWhenNoGenomes() {
 		Genome genome1 = new Genome();
 		Genome genome2 = new Genome();
 		
@@ -49,8 +47,7 @@ public class GenomeComparatorTest
 	}
 	
 	@Test
-	public void canMatchSpeciesWhenIdentical()
-	{
+	public void canMatchSpeciesWhenIdentical() {
 		Genome genome1 = new Genome(input1, input2, input3, output)
 			.addGene(new ConnectionGene(input1, output, 0, true, 1))
 			.addGene(new ConnectionGene(input2, output, 0, true, 2))
@@ -64,20 +61,17 @@ public class GenomeComparatorTest
 	}
 	
 	@Test
-	public void canCountExcessGenes()
-	{
+	public void canCountExcessGenes() {
 		assertThat(comparator.excessGeneCount(genome1(), genome2()), is(2));
 	}
 	
 	@Test
-	public void canCountDisjointGenes()
-	{
+	public void canCountDisjointGenes() {
 		assertThat(comparator.disjointGeneCount(genome1(), genome2()), is(2));
 	}
 	
 	@Test
-	public void canAverageWeightDifferences()
-	{
+	public void canAverageWeightDifferences() {
 		// ( |0.1-0.2| + |0.2-0.4| + |0.3-0.6| + |0.4-0.8| ) / 4
 		assertThat(comparator.averageWeightDifferences(genome1(), genome2()), is(0.25));
 	}
@@ -85,8 +79,7 @@ public class GenomeComparatorTest
 	/**
 	 * Example genome from original paper.
 	 */
-	private Genome genome1()
-	{
+	private Genome genome1() {
 		return new Genome(input1, input2, input3, output, hidden1)
 			.addGene(new ConnectionGene(input1, hidden1, 0.1, true, 1))
 			.addGene(new ConnectionGene(input2, hidden1, 0.2, true, 2))
@@ -98,8 +91,7 @@ public class GenomeComparatorTest
 	/**
 	 * Example genome from original paper.
 	 */
-	private Genome genome2()
-	{
+	private Genome genome2() {
 		return new Genome(input1, input2, input3, output, hidden1, hidden2)
 			.addGene(new ConnectionGene(input1, hidden1, 0.2, false, 1))
 			.addGene(new ConnectionGene(input2, hidden1, 0.4, true, 2))

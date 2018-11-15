@@ -8,8 +8,8 @@ import static java.util.stream.Collectors.toList;
 
 import static uk.co.blackpepper.neuroevolution.NodeGene.newHidden;
 
-class GenomeMutator
-{
+class GenomeMutator {
+	
 	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
 	
 	private static final double CONNECTION_WEIGHT_MUTATION_STEP = 0.1;
@@ -22,30 +22,25 @@ class GenomeMutator
 	
 	private final Random random;
 	
-	public GenomeMutator(GeneFactory geneFactory, Random random)
-	{
+	public GenomeMutator(GeneFactory geneFactory, Random random) {
 		this.geneFactory = geneFactory;
 		this.random = random;
 	}
 	
-	public Genome mutate(Genome genome)
-	{
+	public Genome mutate(Genome genome) {
 		Genome result = genome.copy();
 		
 		// TODO: mutate mutation rates?
 		
-		if (random.nextDouble() < CONNECTION_WEIGHT_MUTATION_RATE)
-		{
+		if (random.nextDouble() < CONNECTION_WEIGHT_MUTATION_RATE) {
 			result = mutateConnectionWeights(result);
 		}
 		
-		if (random.nextDouble() < CONNECTION_MUTATION_RATE)
-		{
+		if (random.nextDouble() < CONNECTION_MUTATION_RATE) {
 			result = mutateConnections(result);
 		}
 		
-		if (random.nextDouble() < NODE_MUTATION_RATE)
-		{
+		if (random.nextDouble() < NODE_MUTATION_RATE) {
 			result = mutateNodes(result);
 		}
 		
@@ -54,16 +49,14 @@ class GenomeMutator
 		return result;
 	}
 	
-	Genome mutateConnectionWeights(Genome genome)
-	{
+	Genome mutateConnectionWeights(Genome genome) {
 		Stream<ConnectionGene> connections = genome.getConnectionGenes()
 			.map(this::mutateConnectionWeight);
 		
 		return new Genome(Stream.concat(genome.getNodeGenes(), connections));
 	}
 	
-	ConnectionGene mutateConnectionWeight(ConnectionGene connection)
-	{
+	ConnectionGene mutateConnectionWeight(ConnectionGene connection) {
 		// TODO: introduce low probability of randomising rather than perturbing
 		
 		double newWeight = connection.getWeight() + (2 * random.nextDouble() - 1) * CONNECTION_WEIGHT_MUTATION_STEP;
@@ -72,21 +65,18 @@ class GenomeMutator
 			connection.getInnovation());
 	}
 	
-	Genome mutateConnections(Genome genome)
-	{
+	Genome mutateConnections(Genome genome) {
 		List<NodeGene> nodes = genome.getNodeGenes()
 			.collect(toList());
 		
-		if (nodes.isEmpty())
-		{
+		if (nodes.isEmpty()) {
 			return genome;
 		}
 		
 		NodeGene input = nodes.get(random.nextInt(nodes.size()));
 		NodeGene output = nodes.get(random.nextInt(nodes.size()));
 		
-		if (input.equals(output) || output.isInput() || genome.connects(input, output))
-		{
+		if (input.equals(output) || output.isInput() || genome.connects(input, output)) {
 			return genome;
 		}
 		
@@ -95,13 +85,11 @@ class GenomeMutator
 		return genome.addGene(geneFactory.newConnectionGene(input, output, newWeight));
 	}
 	
-	Genome mutateNodes(Genome genome)
-	{
+	Genome mutateNodes(Genome genome) {
 		List<ConnectionGene> connections = genome.getConnectionGenes()
 			.collect(toList());
 		
-		if (connections.isEmpty())
-		{
+		if (connections.isEmpty()) {
 			return genome;
 		}
 		

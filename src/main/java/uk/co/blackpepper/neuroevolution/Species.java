@@ -5,35 +5,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class Species
-{
+public class Species {
+	
 	private List<Genome> genomes;
 	
-	public Species()
-	{
+	public Species() {
 		genomes = new ArrayList<>();
 	}
 	
-	public void addGenome(Genome genome)
-	{
+	public void addGenome(Genome genome) {
 		genomes.add(genome);
 	}
 	
-	public Stream<Genome> getGenomes()
-	{
+	public Stream<Genome> getGenomes() {
 		return genomes.stream();
 	}
 	
-	public boolean isCompatibleWith(Genome genome)
-	{
+	public boolean isCompatibleWith(Genome genome) {
 		Genome someGenome = getGenomes().findAny()
 			.orElseThrow(() -> new IllegalStateException("Empty species"));
 		
 		return new GenomeComparator().compare(someGenome, genome) == 0;
 	}
 	
-	public void print(PrintStream out)
-	{
+	public void print(PrintStream out) {
 		out.println("Species:");
 		
 		genomes.forEach(genome -> genome.print(out));

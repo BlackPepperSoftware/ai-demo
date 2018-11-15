@@ -3,17 +3,15 @@ package uk.co.blackpepper.neuroevolution;
 import java.io.PrintStream;
 import java.util.Random;
 
-public class NeatNetwork
-{
+public class NeatNetwork {
+	
 	private Population population;
 	
-	public NeatNetwork(int inputNodeCount, int outputNodeCount)
-	{
+	public NeatNetwork(int inputNodeCount, int outputNodeCount) {
 		population = new Population(10, inputNodeCount, outputNodeCount, new GeneFactory(), new Random());
 	}
 	
-	public void print(PrintStream out)
-	{
+	public void print(PrintStream out) {
 		population.print(out);
 	}
 }

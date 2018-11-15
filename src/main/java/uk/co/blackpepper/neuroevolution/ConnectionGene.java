@@ -2,8 +2,8 @@ package uk.co.blackpepper.neuroevolution;
 
 import java.util.Objects;
 
-public class ConnectionGene implements Gene
-{
+public class ConnectionGene implements Gene {
+	
 	private final NodeGene input;
 	
 	private final NodeGene output;
@@ -14,10 +14,8 @@ public class ConnectionGene implements Gene
 	
 	private final int innovation;
 	
-	ConnectionGene(NodeGene input, NodeGene output, double weight, boolean enabled, int innovation)
-	{
-		if (input.equals(output))
-		{
+	ConnectionGene(NodeGene input, NodeGene output, double weight, boolean enabled, int innovation) {
+		if (input.equals(output)) {
 			throw new IllegalArgumentException("Cannot connect node gene to itself");
 		}
 		
@@ -28,63 +26,51 @@ public class ConnectionGene implements Gene
 		this.innovation = innovation;
 	}
 	
-	private ConnectionGene(ConnectionGene that)
-	{
+	private ConnectionGene(ConnectionGene that) {
 		this(that.input, that.output, that.weight, that.enabled, that.innovation);
 	}
 	
-	public NodeGene getInput()
-	{
+	public NodeGene getInput() {
 		return input;
 	}
 	
-	public NodeGene getOutput()
-	{
+	public NodeGene getOutput() {
 		return output;
 	}
 	
-	public double getWeight()
-	{
+	public double getWeight() {
 		return weight;
 	}
 	
-	public boolean isEnabled()
-	{
+	public boolean isEnabled() {
 		return enabled;
 	}
 	
-	public ConnectionGene disable()
-	{
-		if (!enabled)
-		{
+	public ConnectionGene disable() {
+		if (!enabled) {
 			throw new IllegalStateException("Connection gene already disabled");
 		}
 		
 		return new ConnectionGene(input, output, weight, false, innovation);
 	}
 	
-	public int getInnovation()
-	{
+	public int getInnovation() {
 		return innovation;
 	}
 	
 	@Override
-	public ConnectionGene copy()
-	{
+	public ConnectionGene copy() {
 		return new ConnectionGene(this);
 	}
 	
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		return Objects.hash(input, output, weight, enabled, innovation);
 	}
 	
 	@Override
-	public boolean equals(Object object)
-	{
-		if (!(object instanceof ConnectionGene))
-		{
+	public boolean equals(Object object) {
+		if (!(object instanceof ConnectionGene)) {
 			return false;
 		}
 		
@@ -98,8 +84,7 @@ public class ConnectionGene implements Gene
 	}
 	
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return String.format("[in=%s out=%s w=%f %d i=%d]", input, output, weight, enabled ? 1 : 0, innovation);
 	}
 }

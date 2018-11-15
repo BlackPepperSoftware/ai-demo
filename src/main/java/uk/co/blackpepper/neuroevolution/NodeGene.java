@@ -1,60 +1,50 @@
 package uk.co.blackpepper.neuroevolution;
 
-public class NodeGene implements Gene
-{
+public class NodeGene implements Gene {
+	
 	private final NodeType type;
 	
-	private enum NodeType
-	{
+	private enum NodeType {
 		INPUT,
 		OUTPUT,
 		HIDDEN;
 	}
 	
-	private NodeGene(NodeType type)
-	{
+	private NodeGene(NodeType type) {
 		this.type = type;
 	}
 	
-	private NodeGene(NodeGene that)
-	{
+	private NodeGene(NodeGene that) {
 		this(that.type);
 	}
 	
-	public static NodeGene newInput()
-	{
+	public static NodeGene newInput() {
 		return new NodeGene(NodeType.INPUT);
 	}
 	
-	public static NodeGene newOutput()
-	{
+	public static NodeGene newOutput() {
 		return new NodeGene(NodeType.OUTPUT);
 	}
 	
-	public static NodeGene newHidden()
-	{
+	public static NodeGene newHidden() {
 		return new NodeGene(NodeType.HIDDEN);
 	}
 	
-	public boolean isInput()
-	{
+	public boolean isInput() {
 		return type == NodeType.INPUT;
 	}
 	
-	public boolean isOutput()
-	{
+	public boolean isOutput() {
 		return type == NodeType.OUTPUT;
 	}
 	
 	@Override
-	public NodeGene copy()
-	{
+	public NodeGene copy() {
 		return new NodeGene(this);
 	}
 	
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return type.toString();
 	}
 }

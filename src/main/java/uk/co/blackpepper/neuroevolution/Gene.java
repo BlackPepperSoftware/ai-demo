@@ -1,6 +1,6 @@
 package uk.co.blackpepper.neuroevolution;
 
-public interface Gene
-{
+public interface Gene {
+	
 	Gene copy();
 }
