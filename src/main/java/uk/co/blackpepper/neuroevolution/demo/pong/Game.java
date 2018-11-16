@@ -1,6 +1,7 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
 import java.awt.Dimension;
+import java.util.Random;
 
 public class Game {
 	
@@ -20,7 +21,12 @@ public class Game {
 		int batY = (screenSize.height - Bat.LENGTH) / 2;
 		bat1 = new Bat(0, batY, screenSize.height);
 		bat2 = new Bat(screenSize.width - 1, batY, screenSize.height);
-		ball = new Ball(screenSize.width / 2, screenSize.height / 2, screenSize);
+		
+		Random random = new Random();
+		int ballY = 1 + random.nextInt(screenSize.height - 2);
+		int ballDeltaY = random.nextBoolean() ? -1 : 1;
+		ball = new Ball(screenSize.width / 2, ballY, 1, ballDeltaY, screenSize);
+		
 		active = true;
 	}
 	

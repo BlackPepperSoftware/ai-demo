@@ -14,12 +14,12 @@ public class Ball {
 	
 	private int dy;
 	
-	public Ball(int x0, int y0, Dimension screenSize) {
+	public Ball(int x0, int y0, int dx, int dy, Dimension screenSize) {
 		this.x0 = x0;
 		this.y0 = y0;
 		this.screenSize = screenSize;
-		dx = 1;
-		dy = 1;
+		this.dx = dx;
+		this.dy = dy;
 	}
 	
 	public int getX() {
