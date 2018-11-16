@@ -6,10 +6,13 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PrimitiveIterator;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
@@ -70,6 +73,16 @@ public class Genome {
 		return getNodeGenes(genes);
 	}
 	
+	public Stream<NodeGene> getInputGenes() {
+		return getNodeGenes(genes)
+			.filter(NodeGene::isInput);
+	}
+	
+	public Stream<NodeGene> getOutputGenes() {
+		return getNodeGenes(genes)
+			.filter(NodeGene::isOutput);
+	}
+	
 	public Stream<ConnectionGene> getConnectionGenes() {
 		return getConnectionGenes(genes);
 	}
@@ -84,12 +97,34 @@ public class Genome {
 		return new GenomeMutator(geneFactory, random).mutate(this);
 	}
 	
+	public DoubleStream evaluate(DoubleStream inputs) {
+		PrimitiveIterator.OfDouble inputsIterator = inputs.iterator();
+		Map<NodeGene, Double> inputValues = getInputGenes()
+			.collect(toMap(Function.identity(), x -> inputsIterator.nextDouble()));
+		
+		return getOutputGenes()
+			.mapToDouble(output -> evaluateOutputNode(output, inputValues));
+	}
+	
 	public Genome copy() {
 		return new Genome(this);
 	}
 	
 	public void print(PrintStream out) {
 		out.println("  " + genes);
+	}
+	
+	private double evaluateOutputNode(NodeGene output, Map<NodeGene, Double> inputValues) {
+		// TODO: evaluate connection input nodes recursively to support hidden layers
+		
+		return getGenesConnectedTo(output)
+			.mapToDouble(connection -> inputValues.get(connection.getInput()) * connection.getWeight())
+			.sum();
+	}
+	
+	private Stream<ConnectionGene> getGenesConnectedTo(NodeGene node) {
+		return getConnectionGenes()
+			.filter(connection -> connection.getOutput() == node);
 	}
 	
 	private static Stream<Gene> copyGenes(Collection<Gene> genes) {

@@ -30,6 +30,14 @@ public class Ball {
 		return y0;
 	}
 	
+	public int getDeltaX() {
+		return dx;
+	}
+	
+	public int getDeltaY() {
+		return dy;
+	}
+	
 	public boolean out() {
 		return x0 == 0 || x0 == screenSize.getWidth() - 1;
 	}

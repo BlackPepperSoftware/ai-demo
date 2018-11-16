@@ -20,6 +20,18 @@ public class Game {
 		active = true;
 	}
 	
+	public Bat getBat1() {
+		return bat1;
+	}
+	
+	public Bat getBat2() {
+		return bat2;
+	}
+	
+	public Ball getBall() {
+		return ball;
+	}
+	
 	public void plot(Screen screen) {
 		screen.clear();
 		bat1.plot(screen);
@@ -27,9 +39,9 @@ public class Game {
 		ball.plot(screen);
 	}
 	
-	public boolean tick() {
+	public void tick() {
 		if (!active) {
-			return false;
+			return;
 		}
 		
 		ball.move();
@@ -41,8 +53,6 @@ public class Game {
 		if (ball.out()) {
 			active = false;
 		}
-		
-		return true;
 	}
 	
 	public void moveBat(int index, int dy) {

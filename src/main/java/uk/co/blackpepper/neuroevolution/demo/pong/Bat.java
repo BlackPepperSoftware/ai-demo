@@ -16,6 +16,10 @@ public class Bat {
 		this.screenHeight = screenHeight;
 	}
 	
+	public int getY() {
+		return y0;
+	}
+	
 	public boolean touches(Ball ball) {
 		if (ball.getX() < x0 - 1 || ball.getX() > x0 + 1) {
 			return false;
