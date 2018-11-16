@@ -17,6 +17,7 @@ public class Pong {
 	
 	public static void main(String[] args) {
 		bot = createBot();
+		
 		PongFrame frame = new PongFrame();
 		frame.addPongListener(Pong::botTick);
 		frame.setVisible(true);
@@ -61,12 +62,12 @@ public class Pong {
 	
 	private static void botTick(Game game) {
 		DoubleStream outputs = bot.evaluate(DoubleStream.of(
-			game.getBat1().getY(),
-			game.getBat2().getY(),
-			game.getBall().getX(),
-			game.getBall().getY(),
-			game.getBall().getDeltaX(),
-			game.getBall().getDeltaY()
+			normalize(game.getBat1().getY(), 0, game.getScreenSize().height),
+			normalize(game.getBat2().getY(), 0, game.getScreenSize().height),
+			normalize(game.getBall().getX(), 0, game.getScreenSize().width),
+			normalize(game.getBall().getY(), 0, game.getScreenSize().height),
+			normalize(game.getBall().getDeltaX(), -1, 1),
+			normalize(game.getBall().getDeltaY(), -1, 1)
 		));
 		
 		switch (getMaxIndex(outputs.toArray())) {
@@ -81,6 +82,10 @@ public class Pong {
 			case 2:
 				break;
 		}
+	}
+	
+	private static double normalize(double value, double min, double max) {
+		return (value - min) / (max - min);
 	}
 	
 	private static int getMaxIndex(double[] values) {

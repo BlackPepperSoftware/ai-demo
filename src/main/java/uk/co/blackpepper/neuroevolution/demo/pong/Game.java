@@ -4,6 +4,8 @@ import java.awt.Dimension;
 
 public class Game {
 	
+	private final Dimension screenSize;
+	
 	private final Bat bat1;
 	
 	private final Bat bat2;
@@ -13,11 +15,17 @@ public class Game {
 	private boolean active;
 	
 	public Game(Dimension screenSize) {
+		this.screenSize = screenSize;
+
 		int batY = (screenSize.height - Bat.LENGTH) / 2;
 		bat1 = new Bat(0, batY, screenSize.height);
 		bat2 = new Bat(screenSize.width - 1, batY, screenSize.height);
 		ball = new Ball(screenSize.width / 2, screenSize.height / 2, screenSize);
 		active = true;
+	}
+	
+	public Dimension getScreenSize() {
+		return screenSize;
 	}
 	
 	public Bat getBat1() {
