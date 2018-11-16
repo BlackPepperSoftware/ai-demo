@@ -1,7 +1,6 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
 import javax.swing.JFrame;
-import javax.swing.event.EventListenerList;
 
 public class PongFrame extends JFrame {
 	
