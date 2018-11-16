@@ -69,18 +69,7 @@ public class Pong {
 			game.getBall().getDeltaY()
 		));
 		
-		int maxIndex = -1;
-		double maxOutput = 0;
-		double[] outputsArray = outputs.toArray();
-		
-		for (int index = 0; index < outputsArray.length; index++) {
-			if (outputsArray[index] > maxOutput) {
-				maxOutput = outputsArray[index];
-				maxIndex = index;
-			}
-		}
-		
-		switch (maxIndex) {
+		switch (getMaxIndex(outputs.toArray())) {
 			case 0:
 				game.moveBat(1, -1);
 				break;
@@ -92,5 +81,18 @@ public class Pong {
 			case 2:
 				break;
 		}
+	}
+	
+	private static int getMaxIndex(double[] values) {
+		int maxIndex = -1;
+		double maxValue = 0;
+		
+		for (int index = 0; index < values.length; index++) {
+			if (values[index] > maxValue) {
+				maxValue = values[index];
+				maxIndex = index;
+			}
+		}
+		return maxIndex;
 	}
 }
