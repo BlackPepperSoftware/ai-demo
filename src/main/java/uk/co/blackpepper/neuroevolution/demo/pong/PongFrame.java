@@ -5,7 +5,7 @@ import javax.swing.JFrame;
 public class PongFrame extends JFrame {
 	
 	public PongFrame() {
-		super("PongFrame");
+		super("Pong");
 		
 		setLocationByPlatform(true);
 		setSize(1280, 1024);
