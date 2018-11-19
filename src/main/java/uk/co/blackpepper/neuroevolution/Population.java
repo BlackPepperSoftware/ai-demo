@@ -17,6 +17,8 @@ public class Population {
 	
 	private final Selector selector;
 	
+	private final Crossover crossover;
+	
 	public Population(int size, int inputNodeCount, int outputNodeCount) {
 		this(Stream.generate(() -> new Genome().addInputNodes(inputNodeCount).addOutputNodes(outputNodeCount))
 			.limit(size)
@@ -28,6 +30,7 @@ public class Population {
 		
 		Random random = new Random();
 		selector = new RouletteWheelSelector(random);
+		crossover = new NeatCrossover(random);
 	}
 	
 	public Stream<Genome> getGenomes() {
@@ -54,15 +57,11 @@ public class Population {
 	}
 	
 	private Genome reproduce(Map<Genome, Integer> fitnesses) {
-		Genome mum = selector.select(getGenomes(), fitnesses);
-		Genome dad = selector.select(getGenomes(), fitnesses);
+		Genome parent1 = selector.select(getGenomes(), fitnesses);
+		Genome parent2 = selector.select(getGenomes(), fitnesses);
+		Genome child = crossover.crossover(parent1, parent2, fitnesses);
 		
-		return mutate(crossover(mum, dad));
-	}
-	
-	private Genome crossover(Genome mum, Genome dad) {
-		// TODO: crossover
-		return mum;
+		return mutate(child);
 	}
 	
 	private Genome mutate(Genome genome) {
