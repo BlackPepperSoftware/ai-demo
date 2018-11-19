@@ -79,6 +79,7 @@ public class Game {
 		
 		executor.shutdown();
 		active = false;
+		fireStoppedEvent();
 	}
 	
 	public void plot(Screen screen) {
@@ -122,6 +123,12 @@ public class Game {
 	private void fireTickEvent() {
 		for (PongListener listener : listeners.getListeners(PongListener.class)) {
 			listener.tick(this);
+		}
+	}
+	
+	private void fireStoppedEvent() {
+		for (PongListener listener : listeners.getListeners(PongListener.class)) {
+			listener.stopped();
 		}
 	}
 }

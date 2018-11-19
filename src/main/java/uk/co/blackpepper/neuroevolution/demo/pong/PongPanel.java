@@ -82,7 +82,12 @@ public class PongPanel extends JComponent {
 	
 	private void restart() {
 		game = new Game(screen.getSize());
-		game.addPongListener(game -> refresh());
+		game.addPongListener(new PongAdapter() {
+			@Override
+			public void tick(Game game) {
+				refresh();
+			}
+		});
 		game.start();
 	}
 	

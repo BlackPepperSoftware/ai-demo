@@ -5,4 +5,6 @@ import java.util.EventListener;
 public interface PongListener extends EventListener {
 	
 	void tick(Game game);
+	
+	void stopped();
 }

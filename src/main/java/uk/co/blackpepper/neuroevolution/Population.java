@@ -12,9 +12,12 @@ public class Population {
 		species = new Species();
 		
 		Stream.generate(() -> new Genome().addInputNodes(inputNodeCount).addOutputNodes(outputNodeCount))
-			.map(genome -> genome.mutate(geneFactory, random))
 			.limit(size)
 			.forEach(this::addGenome);
+	}
+	
+	public Stream<Genome> getGenomes() {
+		return species.getGenomes();
 	}
 	
 	public void print(PrintStream out) {
