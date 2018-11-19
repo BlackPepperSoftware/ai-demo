@@ -2,8 +2,19 @@ package uk.co.blackpepper.neuroevolution.demo.pong;
 
 import java.awt.Dimension;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import javax.swing.event.EventListenerList;
 
 public class Game {
+	
+	private static final int TICK_MILLIS = 100;
+	
+	private final ScheduledExecutorService executor;
+	
+	private final EventListenerList listeners;
 	
 	private final Dimension screenSize;
 	
@@ -16,6 +27,10 @@ public class Game {
 	private boolean active;
 	
 	public Game(Dimension screenSize) {
+		executor = Executors.newSingleThreadScheduledExecutor();
+		listeners = new EventListenerList();
+		active = false;
+		
 		this.screenSize = screenSize;
 
 		int batY = (screenSize.height - Bat.LENGTH) / 2;
@@ -26,8 +41,10 @@ public class Game {
 		int ballY = 1 + random.nextInt(screenSize.height - 2);
 		int ballDeltaY = random.nextBoolean() ? -1 : 1;
 		ball = new Ball(screenSize.width / 2, ballY, 1, ballDeltaY, screenSize);
-		
-		active = true;
+	}
+	
+	public void addPongListener(PongListener listener) {
+		listeners.add(PongListener.class, listener);
 	}
 	
 	public Dimension getScreenSize() {
@@ -46,6 +63,24 @@ public class Game {
 		return ball;
 	}
 	
+	public void start() {
+		if (active) {
+			throw new IllegalStateException("Game already started");
+		}
+		
+		executor.scheduleAtFixedRate(this::tick, 0, TICK_MILLIS, TimeUnit.MILLISECONDS);
+		active = true;
+	}
+	
+	public void stop() {
+		if (!active) {
+			throw new IllegalStateException("Game not started");
+		}
+		
+		executor.shutdown();
+		active = false;
+	}
+	
 	public void plot(Screen screen) {
 		screen.clear();
 		bat1.plot(screen);
@@ -54,6 +89,21 @@ public class Game {
 	}
 	
 	public void tick() {
+		try {
+			tickGame();
+			fireTickEvent();
+		}
+		catch (Throwable throwable) {
+			throwable.printStackTrace();
+		}
+	}
+	
+	public void moveBat(int index, int dy) {
+		Bat bat = index == 0 ? bat1 : bat2;
+		bat.move(dy);
+	}
+	
+	private void tickGame() {
 		if (!active) {
 			return;
 		}
@@ -65,12 +115,13 @@ public class Game {
 		}
 		
 		if (ball.out()) {
-			active = false;
+			stop();
 		}
 	}
 	
-	public void moveBat(int index, int dy) {
-		Bat bat = index == 0 ? bat1 : bat2;
-		bat.move(dy);
+	private void fireTickEvent() {
+		for (PongListener listener : listeners.getListeners(PongListener.class)) {
+			listener.tick(this);
+		}
 	}
 }

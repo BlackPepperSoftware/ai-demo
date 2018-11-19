@@ -6,45 +6,31 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-import javax.swing.event.EventListenerList;
 
 public class PongPanel extends JComponent {
 	
 	private static final Dimension SIZE = new Dimension(40, 32);
 	
-	private static final int ANIMATION_MILLIS = 100;
-	
-	private final EventListenerList listeners;
-	
 	private final Screen screen;
 	
 	private Game game;
 	
-	private final ScheduledExecutorService executor;
-	
 	private Image image;
 	
 	public PongPanel() {
-		listeners = new EventListenerList();
 		screen = new Screen(SIZE);
 		restart();
-		
-		executor = Executors.newSingleThreadScheduledExecutor();
-		executor.scheduleAtFixedRate(this::tick, 0, ANIMATION_MILLIS, TimeUnit.MILLISECONDS);
 		
 		bindActions();
 	}
 	
-	public void addPongListener(PongListener listener) {
-		listeners.add(PongListener.class, listener);
+	public Game getGame() {
+		return game;
 	}
 	
 	@Override
@@ -96,6 +82,8 @@ public class PongPanel extends JComponent {
 	
 	private void restart() {
 		game = new Game(screen.getSize());
+		game.addPongListener(game -> refresh());
+		game.start();
 	}
 	
 	private Image getImage() {
@@ -103,23 +91,6 @@ public class PongPanel extends JComponent {
 			image = createImage(screen.getImageSource());
 		}
 		return image;
-	}
-	
-	private void tick() {
-		try {
-			game.tick();
-			fireTickEvent();
-			refresh();
-		}
-		catch (Throwable throwable) {
-			throwable.printStackTrace();
-		}
-	}
-	
-	private void fireTickEvent() {
-		for (PongListener listener : listeners.getListeners(PongListener.class)) {
-			listener.tick(game);
-		}
 	}
 	
 	private void refresh() {
