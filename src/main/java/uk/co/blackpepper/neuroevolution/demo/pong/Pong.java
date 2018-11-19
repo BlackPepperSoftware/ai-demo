@@ -1,6 +1,5 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
-import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
 import uk.co.blackpepper.neuroevolution.Genome;
@@ -52,14 +51,11 @@ public class Pong {
 		if (!HEADLESS) {
 			frame.setVisible(true);
 		}
-
-		// evaluate fitness of each individual
 		
-		int[] fitness = population.getGenomes()
-			.mapToInt(genome -> evaluateFitness(genome, frame))
-			.toArray();
-
-		System.out.println("Fitness: " + Arrays.toString(fitness));
+		population.print(System.out);
+		
+		Population nextPopulation = population.evolve(genome -> evaluateFitness(genome, frame));
+		nextPopulation.print(System.out);
 	}
 	
 	private static int evaluateFitness(Genome genome, PongFrame frame) {
