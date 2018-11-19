@@ -12,6 +12,10 @@ public class Pong {
 	
 	private static final boolean HEADLESS = false;
 	
+	private static final int HEADLESS_TICK_MILLIS = 1;
+	
+	private static final int TICK_MILLIS = 100;
+	
 	private static class ActiveListener extends PongAdapter {
 		private final CountDownLatch active = new CountDownLatch(1);
 		
@@ -77,7 +81,7 @@ public class Pong {
 			frame.setGame(game);
 		}
 		
-		game.start();
+		game.start(HEADLESS ? HEADLESS_TICK_MILLIS : TICK_MILLIS);
 		
 		activeListener.waitUntilStopped();
 		

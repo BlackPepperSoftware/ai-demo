@@ -12,8 +12,6 @@ public class Game {
 	
 	private static final Dimension SIZE = new Dimension(40, 32);
 	
-	private static final int TICK_MILLIS = 100;
-	
 	private final ScheduledExecutorService executor;
 	
 	private final EventListenerList listeners;
@@ -69,12 +67,12 @@ public class Game {
 		return ball;
 	}
 	
-	public void start() {
+	public void start(int tickMillis) {
 		if (active) {
 			throw new IllegalStateException("Game already started");
 		}
 		
-		executor.scheduleAtFixedRate(this::tick, 0, TICK_MILLIS, TimeUnit.MILLISECONDS);
+		executor.scheduleAtFixedRate(this::tick, 0, tickMillis, TimeUnit.MILLISECONDS);
 		active = true;
 	}
 	

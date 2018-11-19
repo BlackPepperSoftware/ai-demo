@@ -88,7 +88,7 @@ public class PongPanel extends JComponent {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				setGame(new Game());
-				game.start();
+				// TODO: start game
 			}
 		};
 	}
