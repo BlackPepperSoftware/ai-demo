@@ -1,14 +1,13 @@
 package uk.co.blackpepper.neuroevolution;
 
 import java.io.PrintStream;
-import java.util.Random;
 import java.util.stream.Stream;
 
 public class Population {
 	
 	private Species species;
 	
-	public Population(int size, int inputNodeCount, int outputNodeCount, GeneFactory geneFactory, Random random) {
+	public Population(int size, int inputNodeCount, int outputNodeCount) {
 		species = new Species();
 		
 		Stream.generate(() -> new Genome().addInputNodes(inputNodeCount).addOutputNodes(outputNodeCount))
