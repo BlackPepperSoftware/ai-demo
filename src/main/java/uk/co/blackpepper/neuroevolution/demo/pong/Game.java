@@ -10,6 +10,8 @@ import javax.swing.event.EventListenerList;
 
 public class Game {
 	
+	private static final Dimension SIZE = new Dimension(40, 32);
+	
 	private static final int TICK_MILLIS = 100;
 	
 	private final ScheduledExecutorService executor;
@@ -26,12 +28,12 @@ public class Game {
 	
 	private boolean active;
 	
-	public Game(Dimension screenSize) {
+	public Game() {
 		executor = Executors.newSingleThreadScheduledExecutor();
 		listeners = new EventListenerList();
 		active = false;
 		
-		this.screenSize = screenSize;
+		screenSize = SIZE;
 
 		int batY = (screenSize.height - Bat.LENGTH) / 2;
 		bat1 = new Bat(0, batY, screenSize.height);

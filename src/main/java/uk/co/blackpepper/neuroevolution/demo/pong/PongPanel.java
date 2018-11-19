@@ -1,6 +1,5 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -14,8 +13,6 @@ import javax.swing.KeyStroke;
 
 public class PongPanel extends JComponent {
 	
-	private static final Dimension SIZE = new Dimension(40, 32);
-	
 	private final Screen screen;
 	
 	private Game game;
@@ -23,10 +20,12 @@ public class PongPanel extends JComponent {
 	private Image image;
 	
 	public PongPanel() {
-		screen = new Screen(SIZE);
 		restart();
+		screen = new Screen(game.getScreenSize());
 		
 		bindActions();
+		
+		game.start();
 	}
 	
 	public Game getGame() {
@@ -76,19 +75,19 @@ public class PongPanel extends JComponent {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				restart();
+				game.start();
 			}
 		};
 	}
 	
 	private void restart() {
-		game = new Game(screen.getSize());
+		game = new Game();
 		game.addPongListener(new PongAdapter() {
 			@Override
 			public void tick(Game game) {
 				refresh();
 			}
 		});
-		game.start();
 	}
 	
 	private Image getImage() {
