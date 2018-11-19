@@ -8,7 +8,7 @@ import uk.co.blackpepper.neuroevolution.Population;
 
 public class Pong {
 	
-	private static final boolean HEADLESS = false;
+	private static final boolean HEADLESS = true;
 	
 	private static final int HEADLESS_TICK_MILLIS = 1;
 	
