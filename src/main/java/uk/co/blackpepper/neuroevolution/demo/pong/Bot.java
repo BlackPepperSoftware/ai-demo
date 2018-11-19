@@ -13,9 +13,13 @@ import static java.util.stream.Collectors.toList;
 
 public class Bot implements PongListener {
 	
+	private final int player;
+	
 	private final Genome genome;
 	
-	public Bot() {
+	public Bot(int player) {
+		this.player = player;
+		
 		genome = createGenome();
 	}
 	
@@ -31,11 +35,11 @@ public class Bot implements PongListener {
 		
 		switch (getMaxIndex(outputs.toArray())) {
 			case 0:
-				game.moveBat(1, -1);
+				game.moveBat(player, -1);
 				break;
 			
 			case 1:
-				game.moveBat(1, 1);
+				game.moveBat(player, 1);
 				break;
 			
 			case 2:
