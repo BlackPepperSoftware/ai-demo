@@ -10,6 +10,8 @@ import uk.co.blackpepper.neuroevolution.Population;
 
 public class Pong {
 	
+	private static final boolean HEADLESS = false;
+	
 	private static class ActiveListener extends PongAdapter {
 		private final CountDownLatch active = new CountDownLatch(1);
 		
@@ -47,8 +49,10 @@ public class Pong {
 		GeneFactory geneFactory = new GeneFactory();
 		Population population = new Population(10, 6, 3, geneFactory, random);
 		
-		PongFrame frame = new PongFrame();
-		frame.setVisible(true);
+		PongFrame frame = HEADLESS ? null : new PongFrame();
+		if (!HEADLESS) {
+			frame.setVisible(true);
+		}
 
 		// evaluate fitness of each individual
 		
@@ -69,7 +73,10 @@ public class Pong {
 		game.addPongListener(timeAliveListener);
 		game.addPongListener(bot);
 		
-		frame.setGame(game);
+		if (frame != null) {
+			frame.setGame(game);
+		}
+		
 		game.start();
 		
 		activeListener.waitUntilStopped();
