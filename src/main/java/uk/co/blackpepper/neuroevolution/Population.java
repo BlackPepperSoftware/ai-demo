@@ -3,6 +3,7 @@ package uk.co.blackpepper.neuroevolution;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
 import java.util.stream.Stream;
@@ -14,6 +15,8 @@ public class Population {
 	
 	private final List<Genome> genomes;
 	
+	private final Selector selector;
+	
 	public Population(int size, int inputNodeCount, int outputNodeCount) {
 		this(Stream.generate(() -> new Genome().addInputNodes(inputNodeCount).addOutputNodes(outputNodeCount))
 			.limit(size)
@@ -22,6 +25,9 @@ public class Population {
 	
 	public Population(Stream<Genome> genomes) {
 		this.genomes = genomes.collect(toList());
+		
+		Random random = new Random();
+		selector = new RouletteWheelSelector(random);
 	}
 	
 	public Stream<Genome> getGenomes() {
@@ -48,15 +54,10 @@ public class Population {
 	}
 	
 	private Genome reproduce(Map<Genome, Integer> fitnesses) {
-		Genome mum = select(fitnesses);
-		Genome dad = select(fitnesses);
+		Genome mum = selector.select(getGenomes(), fitnesses);
+		Genome dad = selector.select(getGenomes(), fitnesses);
 		
 		return mutate(crossover(mum, dad));
-	}
-	
-	private Genome select(Map<Genome, Integer> fitnesses) {
-		// TODO: select
-		return genomes.get(0);
 	}
 	
 	private Genome crossover(Genome mum, Genome dad) {
