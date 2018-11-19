@@ -2,6 +2,7 @@ package uk.co.blackpepper.neuroevolution.demo.pong;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
 
 import uk.co.blackpepper.neuroevolution.GeneFactory;
 import uk.co.blackpepper.neuroevolution.Genome;
@@ -10,26 +11,19 @@ import uk.co.blackpepper.neuroevolution.Population;
 public class Pong {
 	
 	private static class ActiveListener extends PongAdapter {
-		private boolean active = true;
+		private final CountDownLatch active = new CountDownLatch(1);
 		
 		@Override
 		public void stopped() {
-			active = false;
-		}
-		
-		public boolean isActive() {
-			return active;
+			active.countDown();
 		}
 		
 		public void waitUntilStopped() {
-			// TODO: Wait better
-			while (active) {
-				try {
-					Thread.sleep(100);
-				}
-				catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+			try {
+				active.await();
+			}
+			catch (InterruptedException exception) {
+				throw new RuntimeException("Error waiting to stop", exception);
 			}
 		}
 	}
