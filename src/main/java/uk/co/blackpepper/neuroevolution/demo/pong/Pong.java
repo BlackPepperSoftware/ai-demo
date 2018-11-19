@@ -1,10 +1,8 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
 import java.util.Arrays;
-import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 
-import uk.co.blackpepper.neuroevolution.GeneFactory;
 import uk.co.blackpepper.neuroevolution.Genome;
 import uk.co.blackpepper.neuroevolution.Population;
 
@@ -48,10 +46,7 @@ public class Pong {
 	}
 	
 	public static void main(String[] args) {
-		// TODO: Do we want to specify the seed? And should this be shared between populations?
-		Random random = new Random();
-		GeneFactory geneFactory = new GeneFactory();
-		Population population = new Population(10, 6, 3, geneFactory, random);
+		Population population = new Population(10, 6, 3);
 		
 		PongFrame frame = HEADLESS ? null : new PongFrame();
 		if (!HEADLESS) {

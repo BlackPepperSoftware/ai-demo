@@ -1,29 +1,28 @@
 package uk.co.blackpepper.neuroevolution;
 
 import java.io.PrintStream;
+import java.util.List;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 public class Population {
 	
-	private Species species;
+	private final List<Genome> genomes;
 	
 	public Population(int size, int inputNodeCount, int outputNodeCount) {
-		species = new Species();
-		
-		Stream.generate(() -> new Genome().addInputNodes(inputNodeCount).addOutputNodes(outputNodeCount))
+		genomes = Stream.generate(() -> new Genome().addInputNodes(inputNodeCount).addOutputNodes(outputNodeCount))
 			.limit(size)
-			.forEach(this::addGenome);
+			.collect(toList());
 	}
 	
 	public Stream<Genome> getGenomes() {
-		return species.getGenomes();
+		return genomes.stream();
 	}
 	
 	public void print(PrintStream out) {
-		species.print(out);
-	}
-	
-	private void addGenome(Genome genome) {
-		species.addGenome(genome);
+		out.println("Population:");
+		
+		genomes.forEach(genome -> genome.print(out));
 	}
 }
