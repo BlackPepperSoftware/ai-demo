@@ -14,7 +14,7 @@ public class PongFrame extends JFrame {
 		setContentPane(new PongPanel());
 	}
 	
-	public void addPongListener(PongListener listener) {
-		((PongPanel) getContentPane()).getGame().addPongListener(listener);
+	public void setGame(Game game) {
+		((PongPanel) getContentPane()).setGame(game);
 	}
 }

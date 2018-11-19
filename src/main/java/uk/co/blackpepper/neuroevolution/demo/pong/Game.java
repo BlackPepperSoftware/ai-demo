@@ -49,6 +49,10 @@ public class Game {
 		listeners.add(PongListener.class, listener);
 	}
 	
+	public void removePongListener(PongListener listener) {
+		listeners.remove(PongListener.class, listener);
+	}
+	
 	public Dimension getScreenSize() {
 		return screenSize;
 	}

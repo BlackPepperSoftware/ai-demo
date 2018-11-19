@@ -13,6 +13,8 @@ import javax.swing.KeyStroke;
 
 public class PongPanel extends JComponent {
 	
+	private final PongListener refreshListener;
+	
 	private final Screen screen;
 	
 	private Game game;
@@ -20,16 +22,27 @@ public class PongPanel extends JComponent {
 	private Image image;
 	
 	public PongPanel() {
-		restart();
+		refreshListener = new PongAdapter() {
+			@Override
+			public void tick(Game game) {
+				refresh();
+			}
+		};
+		
+		setGame(new Game());
 		screen = new Screen(game.getScreenSize());
 		
 		bindActions();
-		
-		game.start();
 	}
 	
-	public Game getGame() {
-		return game;
+	public void setGame(Game game) {
+		if (this.game != null) {
+			this.game.removePongListener(refreshListener);
+		}
+		
+		this.game = game;
+		
+		game.addPongListener(refreshListener);
 	}
 	
 	@Override
@@ -74,20 +87,10 @@ public class PongPanel extends JComponent {
 		return new AbstractAction(name) {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				restart();
+				setGame(new Game());
 				game.start();
 			}
 		};
-	}
-	
-	private void restart() {
-		game = new Game();
-		game.addPongListener(new PongAdapter() {
-			@Override
-			public void tick(Game game) {
-				refresh();
-			}
-		});
 	}
 	
 	private Image getImage() {

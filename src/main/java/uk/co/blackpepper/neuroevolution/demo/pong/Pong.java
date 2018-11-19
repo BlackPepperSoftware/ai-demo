@@ -53,29 +53,32 @@ public class Pong {
 		GeneFactory geneFactory = new GeneFactory();
 		Population population = new Population(10, 6, 3, geneFactory, random);
 		
+		PongFrame frame = new PongFrame();
+		frame.setVisible(true);
+
 		// evaluate fitness of each individual
 		
 		int[] fitness = population.getGenomes()
-			.mapToInt(Pong::evaluateFitness)
+			.mapToInt(genome -> evaluateFitness(genome, frame))
 			.toArray();
 
 		System.out.println("Fitness: " + Arrays.toString(fitness));
 	}
 	
-	private static int evaluateFitness(Genome genome) {
+	private static int evaluateFitness(Genome genome, PongFrame frame) {
 		ActiveListener activeListener = new ActiveListener();
 		TimeAliveListener timeAliveListener = new TimeAliveListener();
 		Bot bot = new Bot(genome, 1);
+
+		Game game = new Game();
+		game.addPongListener(activeListener);
+		game.addPongListener(timeAliveListener);
+		game.addPongListener(bot);
 		
-		PongFrame frame = new PongFrame();
-		frame.addPongListener(activeListener);
-		frame.addPongListener(timeAliveListener);
-		frame.addPongListener(bot);
-		frame.setVisible(true);
+		frame.setGame(game);
+		game.start();
 		
 		activeListener.waitUntilStopped();
-		
-		frame.setVisible(false);
 		
 		return timeAliveListener.getTime();
 	}
