@@ -12,7 +12,7 @@ public class Game {
 	
 	private static final Dimension SIZE = new Dimension(40, 32);
 	
-	private static final boolean ONE_PLAYER = false;
+	private static final boolean ONE_PLAYER = true;
 	
 	private final ScheduledExecutorService executor;
 	
