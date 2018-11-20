@@ -9,6 +9,8 @@ import uk.co.blackpepper.neuroevolution.GeneFactory;
 import uk.co.blackpepper.neuroevolution.Genome;
 import uk.co.blackpepper.neuroevolution.Population;
 
+import static java.util.Comparator.comparingInt;
+
 public class Pong {
 	
 	private static final boolean HEADLESS = true;
@@ -84,13 +86,14 @@ public class Pong {
 		
 		ToIntFunction<Genome> fitness = new MemoizedToIntFunction<>(genome -> evaluateFitness(genome, frame));
 		
-		for (int generation = 1; generation < MAX_GENERATIONS; generation++) {
-			System.out.println("Generation #" + generation);
-			
+		for (int generation = 1; generation <= MAX_GENERATIONS; generation++) {
 			population = population.evolve(fitness);
 			
-			population.getGenomes()
-				.forEach(genome -> System.out.format("%d %s%n", fitness.applyAsInt(genome), genome));
+			Genome fittest = population.getGenomes()
+				.max(comparingInt(fitness))
+				.orElseThrow(IllegalStateException::new);
+			
+			System.out.format("Generation #%d: %s%n", generation, fittest);
 		}
 	}
 	
