@@ -1,6 +1,5 @@
 package uk.co.blackpepper.neuroevolution;
 
-import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -30,6 +29,7 @@ public class Genome {
 		List<Gene> genesList = genes.collect(toList());
 		checkConnectionGenesNodes(genesList);
 		checkConnectionGenesUnique(genesList);
+		// TODO: check no cyclic connection genes
 		
 		this.genes = genesList;
 	}
@@ -103,7 +103,7 @@ public class Genome {
 			.collect(toMap(Function.identity(), x -> inputsIterator.nextDouble()));
 		
 		return getOutputGenes()
-			.mapToDouble(output -> evaluateNode(output, inputValues));
+			.mapToDouble(output -> evaluateNode(output, inputValues, new HashSet<>()));
 	}
 	
 	public Genome copy() {
@@ -115,13 +115,22 @@ public class Genome {
 		return genes.toString();
 	}
 	
-	private double evaluateNode(NodeGene node, Map<NodeGene, Double> inputValues) {
+	private double evaluateNode(NodeGene node, Map<NodeGene, Double> inputValues, Set<NodeGene> visitedNodes) {
 		if (node.isInput()) {
 			return inputValues.get(node);
 		}
 		
+		if (visitedNodes.contains(node)) {
+			throw new IllegalStateException("Cyclic connection: " + this);
+		}
+		
+		Set<NodeGene> nextVisitedNodes = new HashSet<>(visitedNodes);
+		nextVisitedNodes.add(node);
+		
 		return getGenesConnectedTo(node)
-			.mapToDouble(connection -> evaluateNode(connection.getInput(), inputValues) * connection.getWeight())
+			.mapToDouble(connection
+				-> evaluateNode(connection.getInput(), inputValues, nextVisitedNodes) * connection.getWeight()
+			)
 			.sum();
 	}
 	
