@@ -1,10 +1,10 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
-public class Bat {
+public class Bat implements Bounceable {
 	
 	public static final int LENGTH = 6;
 	
-	private int x0;
+	private final int x0;
 	
 	private int y0;
 	
@@ -16,10 +16,12 @@ public class Bat {
 		this.screenHeight = screenHeight;
 	}
 	
+	@Override
 	public int getY() {
 		return y0;
 	}
 	
+	@Override
 	public boolean touches(Ball ball) {
 		if (ball.getX() < x0 - 1 || ball.getX() > x0 + 1) {
 			return false;
@@ -28,10 +30,12 @@ public class Bat {
 		return ball.getY() >= y0 && ball.getY() < y0 + LENGTH;
 	}
 	
+	@Override
 	public void move(int dy) {
 		y0 = Math.min(Math.max(y0 + dy, 0), screenHeight - LENGTH);
 	}
 	
+	@Override
 	public void plot(Screen screen) {
 		for (int y = y0; y < y0 + LENGTH; y++) {
 			screen.plotPixel(x0, y);

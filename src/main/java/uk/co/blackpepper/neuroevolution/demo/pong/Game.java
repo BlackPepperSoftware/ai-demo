@@ -12,15 +12,17 @@ public class Game {
 	
 	private static final Dimension SIZE = new Dimension(40, 32);
 	
+	private static final boolean ONE_PLAYER = false;
+	
 	private final ScheduledExecutorService executor;
 	
 	private final EventListenerList listeners;
 	
 	private final Dimension screenSize;
 	
-	private final Bat bat1;
+	private final Bounceable bat1;
 	
-	private final Bat bat2;
+	private final Bounceable bat2;
 	
 	private final Ball ball;
 	
@@ -34,7 +36,9 @@ public class Game {
 		screenSize = SIZE;
 
 		int batY = (screenSize.height - Bat.LENGTH) / 2;
-		bat1 = new Bat(0, batY, screenSize.height);
+		bat1 = ONE_PLAYER
+			? new Wall(0, screenSize.height)
+			: new Bat(0, batY, screenSize.height);
 		bat2 = new Bat(screenSize.width - 1, batY, screenSize.height);
 		
 		Random random = new Random();
@@ -55,11 +59,11 @@ public class Game {
 		return screenSize;
 	}
 	
-	public Bat getBat1() {
+	public Bounceable getBat1() {
 		return bat1;
 	}
 	
-	public Bat getBat2() {
+	public Bounceable getBat2() {
 		return bat2;
 	}
 	
@@ -104,7 +108,7 @@ public class Game {
 	}
 	
 	public void moveBat(int index, int dy) {
-		Bat bat = index == 0 ? bat1 : bat2;
+		Bounceable bat = index == 0 ? bat1 : bat2;
 		bat.move(dy);
 	}
 	
