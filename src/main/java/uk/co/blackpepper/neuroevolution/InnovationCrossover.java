@@ -8,11 +8,11 @@ import java.util.function.Function;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-public class NeatCrossover implements Crossover {
+public class InnovationCrossover implements Crossover {
 	
 	private final Random random;
 	
-	public NeatCrossover(Random random) {
+	public InnovationCrossover(Random random) {
 		this.random = random;
 	}
 	

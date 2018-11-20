@@ -30,7 +30,7 @@ public class Population {
 		
 		Random random = new Random();
 		selector = new RouletteWheelSelector(random);
-		crossover = new NeatCrossover(random);
+		crossover = new InnovationCrossover(random);
 	}
 	
 	public Stream<Genome> getGenomes() {
