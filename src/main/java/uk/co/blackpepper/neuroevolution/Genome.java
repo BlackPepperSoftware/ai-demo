@@ -98,7 +98,7 @@ public class Genome {
 			.collect(toMap(Function.identity(), x -> inputsIterator.nextDouble()));
 		
 		return getOutputGenes()
-			.mapToDouble(output -> evaluateOutputNode(output, inputValues));
+			.mapToDouble(output -> evaluateNode(output, inputValues));
 	}
 	
 	public Genome copy() {
@@ -109,11 +109,13 @@ public class Genome {
 		out.println("  " + genes);
 	}
 	
-	private double evaluateOutputNode(NodeGene output, Map<NodeGene, Double> inputValues) {
-		// TODO: evaluate connection input nodes recursively to support hidden layers
+	private double evaluateNode(NodeGene node, Map<NodeGene, Double> inputValues) {
+		if (node.isInput()) {
+			return inputValues.get(node);
+		}
 		
-		return getGenesConnectedTo(output)
-			.mapToDouble(connection -> inputValues.get(connection.getInput()) * connection.getWeight())
+		return getGenesConnectedTo(node)
+			.mapToDouble(connection -> evaluateNode(connection.getInput(), inputValues) * connection.getWeight())
 			.sum();
 	}
 	
