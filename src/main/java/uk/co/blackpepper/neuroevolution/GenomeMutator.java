@@ -1,7 +1,9 @@
 package uk.co.blackpepper.neuroevolution;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -76,7 +78,9 @@ class GenomeMutator implements Mutator {
 		NodeGene input = nodes.get(random.nextInt(nodes.size()));
 		NodeGene output = nodes.get(random.nextInt(nodes.size()));
 		
-		if (input.equals(output) || input.isOutput() || output.isInput() || genome.connects(input, output)) {
+		if (input.equals(output) || input.isOutput() || output.isInput() || genome.connects(input, output)
+			|| isCyclic(genome, input, output)
+		) {
 			return genome;
 		}
 		
@@ -100,5 +104,24 @@ class GenomeMutator implements Mutator {
 			.addGene(newNode)
 			.addGene(geneFactory.newConnectionGene(connection.getInput(), newNode, 1))
 			.addGene(geneFactory.newConnectionGene(newNode, connection.getOutput(), connection.getWeight()));
+	}
+	
+	private boolean isCyclic(Genome genome, NodeGene input, NodeGene output) {
+		Set<NodeGene> visitedNodes = new HashSet<>();
+		visitedNodes.add(output);
+		
+		return isCyclic(genome, input, visitedNodes);
+	}
+	
+	private boolean isCyclic(Genome genome, NodeGene node, Set<NodeGene> visitedNodes) {
+		if (visitedNodes.contains(node)) {
+			return true;
+		}
+		
+		Set<NodeGene> nextVisitedNodes = new HashSet<>(visitedNodes);
+		nextVisitedNodes.add(node);
+		
+		return genome.getConnectionsTo(node)
+			.anyMatch(connection -> isCyclic(genome, connection.getInput(), nextVisitedNodes));
 	}
 }

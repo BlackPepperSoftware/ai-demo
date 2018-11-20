@@ -91,6 +91,11 @@ public class Genome {
 			.filter(ConnectionGene::isEnabled);
 	}
 	
+	public Stream<ConnectionGene> getConnectionsTo(NodeGene node) {
+		return getEnabledConnectionGenes()
+			.filter(connection -> connection.getOutput() == node);
+	}
+	
 	public boolean connects(NodeGene input, NodeGene output) {
 		return getConnectionGenes()
 			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
@@ -127,16 +132,11 @@ public class Genome {
 		Set<NodeGene> nextVisitedNodes = new HashSet<>(visitedNodes);
 		nextVisitedNodes.add(node);
 		
-		return getGenesConnectedTo(node)
+		return getConnectionsTo(node)
 			.mapToDouble(connection
 				-> evaluateNode(connection.getInput(), inputValues, nextVisitedNodes) * connection.getWeight()
 			)
 			.sum();
-	}
-	
-	private Stream<ConnectionGene> getGenesConnectedTo(NodeGene node) {
-		return getEnabledConnectionGenes()
-			.filter(connection -> connection.getOutput() == node);
 	}
 	
 	private static Stream<Gene> copyGenes(Collection<Gene> genes) {
