@@ -110,8 +110,9 @@ public class Genome {
 		return new Genome(this);
 	}
 	
-	public void print(PrintStream out) {
-		out.println("  " + genes);
+	@Override
+	public String toString() {
+		return genes.toString();
 	}
 	
 	private double evaluateNode(NodeGene node, Map<NodeGene, Double> inputValues) {

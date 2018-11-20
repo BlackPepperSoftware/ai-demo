@@ -1,6 +1,9 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
+import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.ToIntFunction;
 
 import uk.co.blackpepper.neuroevolution.GeneFactory;
 import uk.co.blackpepper.neuroevolution.Genome;
@@ -47,6 +50,29 @@ public class Pong {
 		}
 	}
 	
+	private static class MemoizedToIntFunction<T> implements ToIntFunction<T> {
+		
+		private final ToIntFunction<T> delegate;
+		
+		private final Map<T, Integer> cache;
+		
+		public MemoizedToIntFunction(ToIntFunction<T> delegate) {
+			this.delegate = delegate;
+			cache = new WeakHashMap<>();
+		}
+		
+		@Override
+		public int applyAsInt(T value) {
+			if (cache.containsKey(value)) {
+				return cache.get(value);
+			}
+			
+			int result = delegate.applyAsInt(value);
+			cache.put(value, result);
+			return result;
+		}
+	}
+	
 	public static void main(String[] args) {
 		GeneFactory geneFactory = new GeneFactory();
 		Population population = new Population(10, 6, 3, geneFactory);
@@ -56,15 +82,16 @@ public class Pong {
 			frame.setVisible(true);
 		}
 		
-		for (int generation = 0; generation < MAX_GENERATIONS; generation++) {
-			System.out.println("Generation #" + generation);
-			population.print(System.out);
-			
-			population = population.evolve(genome -> evaluateFitness(genome, frame));
-		}
+		ToIntFunction<Genome> fitness = new MemoizedToIntFunction<>(genome -> evaluateFitness(genome, frame));
 		
-		System.out.println("Generation #" + MAX_GENERATIONS);
-		population.print(System.out);
+		for (int generation = 1; generation < MAX_GENERATIONS; generation++) {
+			System.out.println("Generation #" + generation);
+			
+			population = population.evolve(fitness);
+			
+			population.getGenomes()
+				.forEach(genome -> System.out.format("%d %s%n", fitness.applyAsInt(genome), genome));
+		}
 	}
 	
 	private static int evaluateFitness(Genome genome, PongFrame frame) {

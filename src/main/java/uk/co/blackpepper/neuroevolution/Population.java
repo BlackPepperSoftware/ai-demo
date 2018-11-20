@@ -1,6 +1,5 @@
 package uk.co.blackpepper.neuroevolution;
 
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -52,12 +51,6 @@ public class Population {
 		return new Population(Stream.generate(() -> reproduce(fitnesses))
 			.limit(getSize()), geneFactory
 		);
-	}
-	
-	public void print(PrintStream out) {
-		out.println("Population:");
-		
-		genomes.forEach(genome -> genome.print(out));
 	}
 	
 	private static Stream<Genome> newGenomes(int size, int inputNodeCount, int outputNodeCount,
