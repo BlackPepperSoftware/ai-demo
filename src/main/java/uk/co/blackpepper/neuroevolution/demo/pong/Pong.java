@@ -14,6 +14,8 @@ public class Pong {
 	
 	private static final int TICK_MILLIS = 100;
 	
+	private static final int MAX_GENERATIONS = 10;
+	
 	private static class ActiveListener extends PongAdapter {
 		private final CountDownLatch active = new CountDownLatch(1);
 		
@@ -54,10 +56,15 @@ public class Pong {
 			frame.setVisible(true);
 		}
 		
-		population.print(System.out);
+		for (int generation = 0; generation < MAX_GENERATIONS; generation++) {
+			System.out.println("Generation #" + generation);
+			population.print(System.out);
+			
+			population = population.evolve(genome -> evaluateFitness(genome, frame));
+		}
 		
-		Population nextPopulation = population.evolve(genome -> evaluateFitness(genome, frame));
-		nextPopulation.print(System.out);
+		System.out.println("Generation #" + MAX_GENERATIONS);
+		population.print(System.out);
 	}
 	
 	private static int evaluateFitness(Genome genome, PongFrame frame) {
