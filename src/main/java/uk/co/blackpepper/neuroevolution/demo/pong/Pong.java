@@ -85,16 +85,21 @@ public class Pong {
 		}
 		
 		ToIntFunction<Genome> fitness = new MemoizedToIntFunction<>(genome -> evaluateFitness(genome, frame));
+		Genome fittest = null;
 		
 		for (int generation = 1; generation <= MAX_GENERATIONS; generation++) {
 			population = population.evolve(fitness);
 			
-			Genome fittest = population.getGenomes()
+			fittest = population.getGenomes()
 				.max(comparingInt(fitness))
 				.orElseThrow(IllegalStateException::new);
 			
 			System.out.format("Generation #%d: %s%n", generation, fittest);
 		}
+		
+		PongFrame fittestFrame = new PongFrame();
+		fittestFrame.setVisible(true);
+		evaluateFitness(fittest, fittestFrame);
 	}
 	
 	private static int evaluateFitness(Genome genome, PongFrame frame) {
@@ -107,11 +112,12 @@ public class Pong {
 		game.addPongListener(timeAliveListener);
 		game.addPongListener(bot);
 		
-		if (frame != null) {
+		boolean headless = (frame == null);
+		if (!headless) {
 			frame.setGame(game);
 		}
 		
-		game.start(HEADLESS ? HEADLESS_TICK_MILLIS : TICK_MILLIS);
+		game.start(headless ? HEADLESS_TICK_MILLIS : TICK_MILLIS);
 		
 		activeListener.waitUntilStopped();
 		
