@@ -28,14 +28,15 @@ public class Bot extends PongAdapter {
 		
 		switch (getMaxIndex(outputs.toArray())) {
 			case 0:
-				game.moveBat(player, -1);
+				// do nothing
 				break;
 			
 			case 1:
-				game.moveBat(player, 1);
+				game.moveBat(player, -1);
 				break;
 			
 			case 2:
+				game.moveBat(player, 1);
 				break;
 		}
 	}
@@ -46,7 +47,7 @@ public class Bot extends PongAdapter {
 	
 	private static int getMaxIndex(double[] values) {
 		int maxIndex = -1;
-		double maxValue = 0;
+		double maxValue = -Double.MAX_VALUE;
 		
 		for (int index = 0; index < values.length; index++) {
 			if (values[index] > maxValue) {
@@ -54,6 +55,7 @@ public class Bot extends PongAdapter {
 				maxIndex = index;
 			}
 		}
+		
 		return maxIndex;
 	}
 }
