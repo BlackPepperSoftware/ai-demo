@@ -7,7 +7,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PrimitiveIterator;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -91,10 +90,6 @@ public class Genome {
 		return getConnectionGenes()
 			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
 			.anyMatch(gene -> gene.equals(new HashSet<>(asList(input, output))));
-	}
-	
-	public Genome mutate(GeneFactory geneFactory, Random random) {
-		return new GenomeMutator(geneFactory, random).mutate(this);
 	}
 	
 	public DoubleStream evaluate(DoubleStream inputs) {
