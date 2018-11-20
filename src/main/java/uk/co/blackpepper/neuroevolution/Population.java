@@ -24,13 +24,7 @@ public class Population {
 	private final Mutator mutator;
 	
 	public Population(int size, int inputNodeCount, int outputNodeCount, GeneFactory geneFactory) {
-		this(Stream.generate(
-				() -> new Genome()
-					.addInputNodes(inputNodeCount, geneFactory)
-					.addOutputNodes(outputNodeCount, geneFactory)
-			)
-			.limit(size), geneFactory
-		);
+		this(newGenomes(size, inputNodeCount, outputNodeCount, geneFactory), geneFactory);
 	}
 	
 	public Population(Stream<Genome> genomes, GeneFactory geneFactory) {
@@ -64,6 +58,16 @@ public class Population {
 		out.println("Population:");
 		
 		genomes.forEach(genome -> genome.print(out));
+	}
+	
+	private static Stream<Genome> newGenomes(int size, int inputNodeCount, int outputNodeCount,
+		GeneFactory geneFactory) {
+		Genome genome = new Genome()
+			.addInputNodes(inputNodeCount, geneFactory)
+			.addOutputNodes(outputNodeCount, geneFactory);
+		
+		return Stream.generate(genome::copy)
+			.limit(size);
 	}
 	
 	private Genome reproduce(Map<Genome, Integer> fitnesses) {
