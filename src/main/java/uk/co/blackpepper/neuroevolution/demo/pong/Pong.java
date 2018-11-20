@@ -19,6 +19,8 @@ public class Pong {
 	
 	static final int TICK_MILLIS = 100;
 	
+	private static final int MAX_TICKS = 1000;
+	
 	private static final int POPULATION_SIZE = 10;
 	
 	private static final int MAX_GENERATIONS = 10;
@@ -42,15 +44,24 @@ public class Pong {
 	}
 	
 	private static class TimeAliveListener extends PongAdapter {
-		private int time = 0;
+		private final int maxTicks;
+		
+		private int ticks;
+		
+		public TimeAliveListener(int maxTicks) {
+			this.maxTicks = maxTicks;
+			ticks = 0;
+		}
 		
 		@Override
 		public void tick(Game game) {
-			time++;
+			if (ticks++ > maxTicks) {
+				game.stop();
+			}
 		}
 		
-		public int getTime() {
-			return time;
+		public int getTicks() {
+			return ticks;
 		}
 	}
 	
@@ -106,7 +117,7 @@ public class Pong {
 	
 	private static int evaluateFitness(Genome genome, PongFrame frame) {
 		ActiveListener activeListener = new ActiveListener();
-		TimeAliveListener timeAliveListener = new TimeAliveListener();
+		TimeAliveListener timeAliveListener = new TimeAliveListener(MAX_TICKS);
 		Bot bot = new Bot(genome, 1);
 
 		Game game = new Game();
@@ -123,6 +134,6 @@ public class Pong {
 		
 		activeListener.waitUntilStopped();
 		
-		return timeAliveListener.getTime();
+		return timeAliveListener.getTicks();
 	}
 }
