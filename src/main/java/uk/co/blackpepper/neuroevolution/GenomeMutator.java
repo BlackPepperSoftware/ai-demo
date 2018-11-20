@@ -58,6 +58,7 @@ class GenomeMutator implements Mutator {
 	}
 	
 	ConnectionGene mutateConnectionWeight(ConnectionGene connection) {
+		// TODO: ignore disabled connections
 		// TODO: introduce low probability of randomising rather than perturbing
 		
 		double newWeight = connection.getWeight() + (2 * random.nextDouble() - 1) * CONNECTION_WEIGHT_MUTATION_STEP;
@@ -87,7 +88,7 @@ class GenomeMutator implements Mutator {
 	}
 	
 	Genome mutateNodes(Genome genome) {
-		List<ConnectionGene> connections = genome.getConnectionGenes()
+		List<ConnectionGene> connections = genome.getEnabledConnectionGenes()
 			.collect(toList());
 		
 		if (connections.isEmpty()) {

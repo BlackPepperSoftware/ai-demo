@@ -86,6 +86,11 @@ public class Genome {
 		return getConnectionGenes(genes);
 	}
 	
+	public Stream<ConnectionGene> getEnabledConnectionGenes() {
+		return getConnectionGenes()
+			.filter(ConnectionGene::isEnabled);
+	}
+	
 	public boolean connects(NodeGene input, NodeGene output) {
 		return getConnectionGenes()
 			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
