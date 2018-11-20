@@ -55,7 +55,7 @@ public class Pong {
 		
 		@Override
 		public void tick(Game game) {
-			if (ticks++ > maxTicks) {
+			if (ticks++ > maxTicks && maxTicks > 0) {
 				game.stop();
 			}
 		}
@@ -116,8 +116,10 @@ public class Pong {
 	}
 	
 	private static int evaluateFitness(Genome genome, PongFrame frame) {
+		boolean headless = (frame == null);
+
 		ActiveListener activeListener = new ActiveListener();
-		TimeAliveListener timeAliveListener = new TimeAliveListener(MAX_TICKS);
+		TimeAliveListener timeAliveListener = new TimeAliveListener(headless ? MAX_TICKS : 0);
 		Bot bot = new Bot(genome, 1);
 
 		Game game = new Game();
@@ -125,7 +127,6 @@ public class Pong {
 		game.addPongListener(timeAliveListener);
 		game.addPongListener(bot);
 		
-		boolean headless = (frame == null);
 		if (!headless) {
 			frame.setGame(game);
 		}
