@@ -21,9 +21,9 @@ public class Pong {
 	
 	private static final int MAX_TICKS = 1000;
 	
-	private static final int POPULATION_SIZE = 10;
+	private static final int POPULATION_SIZE = 100;
 	
-	private static final int MAX_GENERATIONS = 10;
+	private static final int MAX_GENERATIONS = 20;
 	
 	private static class ActiveListener extends PongAdapter {
 		private final CountDownLatch active = new CountDownLatch(1);
