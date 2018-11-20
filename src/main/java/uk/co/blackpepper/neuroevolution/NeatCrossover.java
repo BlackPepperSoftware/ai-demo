@@ -22,31 +22,33 @@ public class NeatCrossover implements Crossover {
 		int fitness2 = fitnesses.get(parent2);
 
 		// TODO: if equal fitness then disjoint and excess genes are also inherited randomly
-		Genome fit1 = fitness1 >= fitness2 ? parent1 : parent2;
-		Genome fit2 = fitness1 >= fitness2 ? parent2 : parent1;
-		
-		// Genes are randomly chosen from either parent at matching genes
-		// all excess or disjoint genes are always included from the more fit parent
-
-		Map<Integer, ConnectionGene> connections2 = fit2.getConnectionGenes()
+		return fitness1 >= fitness2
+			? crossoverFittest(parent1, parent2)
+			: crossoverFittest(parent2, parent1);
+	}
+	
+	// Genes are randomly chosen from either parent at matching genes
+	// all excess or disjoint genes are always included from the more fit parent
+	private Genome crossoverFittest(Genome alpha, Genome beta) {
+		Map<Integer, ConnectionGene> betaConnections = beta.getConnectionGenes()
 			.collect(toMap(ConnectionGene::getInnovation, Function.identity()));
 		
-		List<Gene> childGenes = fit1.getNodeGenes().collect(toList());
+		List<Gene> childGenes = alpha.getNodeGenes().collect(toList());
 		
-		for (ConnectionGene connection1 : fit1.getConnectionGenes().collect(toList())) {
-			ConnectionGene connection2 = connections2.get(connection1.getInnovation());
+		for (ConnectionGene alphaConnection : alpha.getConnectionGenes().collect(toList())) {
+			ConnectionGene betaConnection = betaConnections.get(alphaConnection.getInnovation());
 			
-			childGenes.add(crossoverGene(connection1, connection2));
+			childGenes.add(crossoverGene(alphaConnection, betaConnection));
 		}
 		
 		return new Genome(childGenes.stream());
 	}
 	
-	private ConnectionGene crossoverGene(ConnectionGene connection1, ConnectionGene connection2) {
-		if (connection2 == null) {
-			return connection1;
+	private ConnectionGene crossoverGene(ConnectionGene alphaConnection, ConnectionGene betaConnection) {
+		if (betaConnection == null) {
+			return alphaConnection;
 		}
 		
-		return random.nextBoolean() ? connection1 : connection2;
+		return random.nextBoolean() ? alphaConnection : betaConnection;
 	}
 }
