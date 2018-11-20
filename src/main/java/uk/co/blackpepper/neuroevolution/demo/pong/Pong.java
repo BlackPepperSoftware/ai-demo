@@ -2,6 +2,7 @@ package uk.co.blackpepper.neuroevolution.demo.pong;
 
 import java.util.concurrent.CountDownLatch;
 
+import uk.co.blackpepper.neuroevolution.GeneFactory;
 import uk.co.blackpepper.neuroevolution.Genome;
 import uk.co.blackpepper.neuroevolution.Population;
 
@@ -45,7 +46,8 @@ public class Pong {
 	}
 	
 	public static void main(String[] args) {
-		Population population = new Population(10, 6, 3);
+		GeneFactory geneFactory = new GeneFactory();
+		Population population = new Population(10, 6, 3, geneFactory);
 		
 		PongFrame frame = HEADLESS ? null : new PongFrame();
 		if (!HEADLESS) {

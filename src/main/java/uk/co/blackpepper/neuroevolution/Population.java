@@ -15,22 +15,28 @@ public class Population {
 	
 	private final List<Genome> genomes;
 	
+	private final GeneFactory geneFactory;
+	
 	private final Selector selector;
 	
 	private final Crossover crossover;
 	
-	public Population(int size, int inputNodeCount, int outputNodeCount) {
+	private final Mutator mutator;
+	
+	public Population(int size, int inputNodeCount, int outputNodeCount, GeneFactory geneFactory) {
 		this(Stream.generate(() -> new Genome().addInputNodes(inputNodeCount).addOutputNodes(outputNodeCount))
-			.limit(size)
+			.limit(size), geneFactory
 		);
 	}
 	
-	public Population(Stream<Genome> genomes) {
+	public Population(Stream<Genome> genomes, GeneFactory geneFactory) {
 		this.genomes = genomes.collect(toList());
+		this.geneFactory = geneFactory;
 		
 		Random random = new Random();
 		selector = new RouletteWheelSelector(random);
 		crossover = new InnovationCrossover(random);
+		mutator = new GenomeMutator(geneFactory, random);
 	}
 	
 	public Stream<Genome> getGenomes() {
@@ -46,7 +52,7 @@ public class Population {
 			.collect(toMap(Function.identity(), fitness::applyAsInt));
 		
 		return new Population(Stream.generate(() -> reproduce(fitnesses))
-			.limit(getSize())
+			.limit(getSize()), geneFactory
 		);
 	}
 	
@@ -61,11 +67,6 @@ public class Population {
 		Genome parent2 = selector.select(getGenomes(), fitnesses);
 		Genome child = crossover.crossover(parent1, parent2, fitnesses);
 		
-		return mutate(child);
-	}
-	
-	private Genome mutate(Genome genome) {
-		// TODO: mutate
-		return genome;
+		return mutator.mutate(child);
 	}
 }

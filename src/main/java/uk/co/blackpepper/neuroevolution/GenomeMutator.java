@@ -8,7 +8,7 @@ import static java.util.stream.Collectors.toList;
 
 import static uk.co.blackpepper.neuroevolution.NodeGene.newHidden;
 
-class GenomeMutator {
+class GenomeMutator implements Mutator {
 	
 	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
 	
@@ -27,6 +27,7 @@ class GenomeMutator {
 		this.random = random;
 	}
 	
+	@Override
 	public Genome mutate(Genome genome) {
 		Genome result = genome.copy();
 		
