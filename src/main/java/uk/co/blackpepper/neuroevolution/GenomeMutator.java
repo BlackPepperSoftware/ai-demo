@@ -76,7 +76,7 @@ class GenomeMutator implements Mutator {
 		NodeGene input = nodes.get(random.nextInt(nodes.size()));
 		NodeGene output = nodes.get(random.nextInt(nodes.size()));
 		
-		if (input.equals(output) || output.isInput() || genome.connects(input, output)) {
+		if (input.equals(output) || input.isOutput() || output.isInput() || genome.connects(input, output)) {
 			return genome;
 		}
 		
