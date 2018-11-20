@@ -126,7 +126,7 @@ public class Genome {
 	}
 	
 	private Stream<ConnectionGene> getGenesConnectedTo(NodeGene node) {
-		return getConnectionGenes()
+		return getEnabledConnectionGenes()
 			.filter(connection -> connection.getOutput() == node);
 	}
 	
