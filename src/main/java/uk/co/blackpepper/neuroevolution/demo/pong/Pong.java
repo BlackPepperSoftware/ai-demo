@@ -19,6 +19,8 @@ public class Pong {
 	
 	static final int TICK_MILLIS = 100;
 	
+	private static final int POPULATION_SIZE = 10;
+	
 	private static final int MAX_GENERATIONS = 10;
 	
 	private static class ActiveListener extends PongAdapter {
@@ -77,7 +79,7 @@ public class Pong {
 	
 	public static void main(String[] args) {
 		GeneFactory geneFactory = new GeneFactory();
-		Population population = new Population(10, 6, 3, geneFactory);
+		Population population = new Population(POPULATION_SIZE, 6, 3, geneFactory);
 		
 		PongFrame frame = HEADLESS ? null : new PongFrame();
 		if (!HEADLESS) {
