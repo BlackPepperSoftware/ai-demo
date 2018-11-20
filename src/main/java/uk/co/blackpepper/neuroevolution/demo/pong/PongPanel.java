@@ -11,6 +11,8 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
+import static uk.co.blackpepper.neuroevolution.demo.pong.Pong.TICK_MILLIS;
+
 public class PongPanel extends JComponent {
 	
 	private final PongListener refreshListener;
@@ -88,7 +90,8 @@ public class PongPanel extends JComponent {
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				setGame(new Game());
-				// TODO: start game
+				// TODO: start game better!
+				game.start(TICK_MILLIS);
 			}
 		};
 	}
