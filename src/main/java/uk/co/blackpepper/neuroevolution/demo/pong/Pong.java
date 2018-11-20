@@ -94,7 +94,7 @@ public class Pong {
 				.max(comparingInt(fitness))
 				.orElseThrow(IllegalStateException::new);
 			
-			System.out.format("Generation #%d: %s%n", generation, fittest);
+			System.out.format("Generation #%d: %d %s%n", generation, fitness.applyAsInt(fittest), fittest);
 		}
 		
 		PongFrame fittestFrame = new PongFrame();
