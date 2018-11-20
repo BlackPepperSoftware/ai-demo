@@ -6,8 +6,6 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
-import static uk.co.blackpepper.neuroevolution.NodeGene.newHidden;
-
 class GenomeMutator implements Mutator {
 	
 	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
@@ -96,7 +94,7 @@ class GenomeMutator implements Mutator {
 		}
 		
 		ConnectionGene connection = connections.get(random.nextInt(connections.size()));
-		NodeGene newNode = newHidden();
+		NodeGene newNode = geneFactory.newHiddenGene();
 		
 		return genome.disableGene(connection)
 			.addGene(newNode)

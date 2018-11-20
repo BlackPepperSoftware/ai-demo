@@ -12,9 +12,6 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import static uk.co.blackpepper.neuroevolution.NodeGene.newInput;
-import static uk.co.blackpepper.neuroevolution.NodeGene.newOutput;
-
 public class GenomeTest {
 	
 	private NodeGene input;
@@ -26,8 +23,9 @@ public class GenomeTest {
 	
 	@Before
 	public void setUp() {
-		input = newInput();
-		output = newOutput();
+		GeneFactory geneFactory = new GeneFactory();
+		input = geneFactory.newInputGene();
+		output = geneFactory.newOutputGene();
 	}
 	
 	@Test

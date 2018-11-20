@@ -6,10 +6,6 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import static uk.co.blackpepper.neuroevolution.NodeGene.newHidden;
-import static uk.co.blackpepper.neuroevolution.NodeGene.newInput;
-import static uk.co.blackpepper.neuroevolution.NodeGene.newOutput;
-
 public class GenomeComparatorTest {
 	
 	private GenomeComparator comparator;
@@ -30,12 +26,13 @@ public class GenomeComparatorTest {
 	public void setUp() {
 		comparator = new GenomeComparator();
 		
-		input1 = newInput();
-		input2 = newInput();
-		input3 = newInput();
-		output = newOutput();
-		hidden1 = newHidden();
-		hidden2 = newHidden();
+		GeneFactory geneFactory = new GeneFactory();
+		input1 = geneFactory.newInputGene();
+		input2 = geneFactory.newInputGene();
+		input3 = geneFactory.newInputGene();
+		output = geneFactory.newOutputGene();
+		hidden1 = geneFactory.newHiddenGene();
+		hidden2 = geneFactory.newHiddenGene();
 	}
 	
 	@Test

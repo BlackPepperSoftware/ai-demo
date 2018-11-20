@@ -24,7 +24,11 @@ public class Population {
 	private final Mutator mutator;
 	
 	public Population(int size, int inputNodeCount, int outputNodeCount, GeneFactory geneFactory) {
-		this(Stream.generate(() -> new Genome().addInputNodes(inputNodeCount).addOutputNodes(outputNodeCount))
+		this(Stream.generate(
+				() -> new Genome()
+					.addInputNodes(inputNodeCount, geneFactory)
+					.addOutputNodes(outputNodeCount, geneFactory)
+			)
 			.limit(size), geneFactory
 		);
 	}

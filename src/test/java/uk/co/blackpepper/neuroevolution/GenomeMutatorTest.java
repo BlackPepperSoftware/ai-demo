@@ -14,9 +14,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static uk.co.blackpepper.neuroevolution.NodeGene.newInput;
-import static uk.co.blackpepper.neuroevolution.NodeGene.newOutput;
-
 public class GenomeMutatorTest {
 	
 	private GeneFactory geneFactory;
@@ -39,10 +36,10 @@ public class GenomeMutatorTest {
 		random = mock(Random.class);
 		mutator = new GenomeMutator(geneFactory, random);
 		
-		input1 = newInput();
-		input2 = newInput();
-		input3 = newInput();
-		output = newOutput();
+		input1 = geneFactory.newInputGene();
+		input2 = geneFactory.newInputGene();
+		input3 = geneFactory.newInputGene();
+		output = geneFactory.newOutputGene();
 	}
 	
 	@Test
@@ -65,7 +62,8 @@ public class GenomeMutatorTest {
 	@Test
 	public void canMutateConnectionWeight() {
 		when(random.nextDouble()).thenReturn(0.6);
-		ConnectionGene connection = new ConnectionGene(newInput(), newOutput(), 1.0, true, 1);
+		ConnectionGene connection = new ConnectionGene(geneFactory.newInputGene(), geneFactory.newOutputGene(), 1.0,
+			true, 1);
 		
 		ConnectionGene result = mutator.mutateConnectionWeight(connection);
 		

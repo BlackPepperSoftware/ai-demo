@@ -46,12 +46,12 @@ public class Genome {
 		return new Genome(Stream.concat(getGenes(), genes));
 	}
 	
-	public Genome addInputNodes(int count) {
-		return addGenes(Stream.generate(NodeGene::newInput).limit(count));
+	public Genome addInputNodes(int count, GeneFactory geneFactory) {
+		return addGenes(Stream.generate(geneFactory::newInputGene).limit(count));
 	}
 	
-	public Genome addOutputNodes(int count) {
-		return addGenes(Stream.generate(NodeGene::newOutput).limit(count));
+	public Genome addOutputNodes(int count, GeneFactory geneFactory) {
+		return addGenes(Stream.generate(geneFactory::newOutputGene).limit(count));
 	}
 	
 	public Genome disableGene(ConnectionGene connection) {

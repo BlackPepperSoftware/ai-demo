@@ -4,30 +4,21 @@ public class NodeGene implements Gene {
 	
 	private final NodeType type;
 	
-	private enum NodeType {
+	private final int id;
+	
+	public enum NodeType {
 		INPUT,
 		OUTPUT,
 		HIDDEN;
 	}
 	
-	private NodeGene(NodeType type) {
+	NodeGene(NodeType type, int id) {
 		this.type = type;
+		this.id = id;
 	}
 	
 	private NodeGene(NodeGene that) {
-		this(that.type);
-	}
-	
-	public static NodeGene newInput() {
-		return new NodeGene(NodeType.INPUT);
-	}
-	
-	public static NodeGene newOutput() {
-		return new NodeGene(NodeType.OUTPUT);
-	}
-	
-	public static NodeGene newHidden() {
-		return new NodeGene(NodeType.HIDDEN);
+		this(that.type, that.id);
 	}
 	
 	public boolean isInput() {
@@ -44,7 +35,23 @@ public class NodeGene implements Gene {
 	}
 	
 	@Override
+	public int hashCode() {
+		return id;
+	}
+	
+	@Override
+	public boolean equals(Object object) {
+		if (!(object instanceof NodeGene)) {
+			return false;
+		}
+		
+		NodeGene that = (NodeGene) object;
+		
+		return id == that.id;
+	}
+	
+	@Override
 	public String toString() {
-		return type.toString();
+		return String.format("%s[%d]", type, id);
 	}
 }

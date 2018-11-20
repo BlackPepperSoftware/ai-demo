@@ -4,8 +4,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static uk.co.blackpepper.neuroevolution.NodeGene.newInput;
-
 public class ConnectionGeneTest {
 	
 	@Rule
@@ -13,7 +11,7 @@ public class ConnectionGeneTest {
 	
 	@Test
 	public void cannotConnectSameNodeGene() {
-		NodeGene node = newInput();
+		NodeGene node = new GeneFactory().newInputGene();
 		
 		thrown.expect(IllegalArgumentException.class);
 		
