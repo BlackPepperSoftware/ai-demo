@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.toList;
 
 public class NodeMutator implements Mutator {
 	
-	private static final double NODE_MUTATION_RATE = 0.5;
+	private static final double RATE = 0.5;
 	
 	private final GeneFactory geneFactory;
 	
@@ -22,7 +22,7 @@ public class NodeMutator implements Mutator {
 	public Genome mutate(Genome genome) {
 		Genome result = genome.copy();
 		
-		if (random.nextDouble() < NODE_MUTATION_RATE) {
+		if (random.nextDouble() < RATE) {
 			result = mutateNodes(result);
 		}
 		

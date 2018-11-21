@@ -5,9 +5,9 @@ import java.util.stream.Stream;
 
 public class ConnectionWeightMutator implements Mutator {
 	
-	private static final double CONNECTION_WEIGHT_MUTATION_RATE = 0.25;
+	private static final double RATE = 0.25;
 	
-	private static final double CONNECTION_WEIGHT_MUTATION_STEP = 0.1;
+	private static final double STEP = 0.1;
 	
 	private final Random random;
 	
@@ -19,7 +19,7 @@ public class ConnectionWeightMutator implements Mutator {
 	public Genome mutate(Genome genome) {
 		Genome result = genome.copy();
 		
-		if (random.nextDouble() < CONNECTION_WEIGHT_MUTATION_RATE) {
+		if (random.nextDouble() < RATE) {
 			result = mutateConnectionWeights(result);
 		}
 		
@@ -40,7 +40,7 @@ public class ConnectionWeightMutator implements Mutator {
 		
 		// TODO: introduce low probability of randomising rather than perturbing
 		
-		double newWeight = connection.getWeight() + (2 * random.nextDouble() - 1) * CONNECTION_WEIGHT_MUTATION_STEP;
+		double newWeight = connection.getWeight() + (2 * random.nextDouble() - 1) * STEP;
 		
 		return new ConnectionGene(connection.getInput(), connection.getOutput(), newWeight, connection.isEnabled(),
 			connection.getInnovation());
