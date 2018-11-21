@@ -11,6 +11,34 @@ import static java.util.stream.Collectors.toMap;
 
 public class Evolver {
 	
+	public static class Builder {
+		
+		private ToIntFunction<Genome> fitness;
+		
+		private GeneFactory geneFactory;
+		
+		private Random random;
+		
+		public Builder fitness(ToIntFunction<Genome> fitness) {
+			this.fitness = fitness;
+			return this;
+		}
+		
+		public Builder geneFactory(GeneFactory geneFactory) {
+			this.geneFactory = geneFactory;
+			return this;
+		}
+		
+		public Builder random(Random random) {
+			this.random = random;
+			return this;
+		}
+		
+		public Evolver build() {
+			return new Evolver(fitness, geneFactory, random);
+		}
+	}
+	
 	private final ToIntFunction<Genome> fitness;
 	
 	private final GeneFactory geneFactory;
@@ -42,7 +70,7 @@ public class Evolver {
 		}
 	}
 	
-	public Evolver(ToIntFunction<Genome> fitness, GeneFactory geneFactory, Random random) {
+	private Evolver(ToIntFunction<Genome> fitness, GeneFactory geneFactory, Random random) {
 		this.fitness = fitness;
 		this.geneFactory = geneFactory;
 		

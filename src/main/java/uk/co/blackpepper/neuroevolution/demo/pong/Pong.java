@@ -94,7 +94,12 @@ public class Pong {
 		GeneFactory geneFactory = new GeneFactory();
 		Random random = new Random();
 		ToIntFunction<Genome> fitness = new MemoizedToIntFunction<>(genome -> evaluateFitness(genome, random, null));
-		Evolver evolver = new Evolver(fitness, geneFactory, random);
+		
+		Evolver evolver = new Evolver.Builder()
+			.fitness(fitness)
+			.geneFactory(geneFactory)
+			.random(random)
+			.build();
 		
 		Genome initialGenome = new Genome()
 			.addGenes(geneFactory.newInputGenes().limit(6))
