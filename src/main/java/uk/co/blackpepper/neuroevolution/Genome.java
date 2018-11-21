@@ -129,10 +129,12 @@ public class Genome {
 	}
 	
 	private static String toGraphviz(ConnectionGene connection) {
-		return String.format("%s -> %s%s;",
+		return String.format("%s -> %s %s;",
 			connection.getInput().getId(),
 			connection.getOutput().getId(),
-			connection.isEnabled() ? "" : " [style=\"dashed\"]"
+			connection.isEnabled()
+				? String.format("[label=%.2f]", connection.getWeight())
+				: "[style=\"dashed\"]"
 		);
 	}
 	
