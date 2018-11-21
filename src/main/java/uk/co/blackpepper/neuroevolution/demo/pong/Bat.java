@@ -27,7 +27,7 @@ public class Bat implements Bounceable {
 			return false;
 		}
 		
-		return ball.getY() >= y0 && ball.getY() < y0 + LENGTH;
+		return ball.getY() >= y0 - 1 && ball.getY() < y0 + LENGTH + 1;
 	}
 	
 	@Override
