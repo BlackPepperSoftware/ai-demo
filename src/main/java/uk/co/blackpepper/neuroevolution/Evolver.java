@@ -42,17 +42,13 @@ public class Evolver {
 		}
 	}
 	
-	public Evolver(ToIntFunction<Genome> fitness, Random random) {
+	public Evolver(ToIntFunction<Genome> fitness, GeneFactory geneFactory, Random random) {
 		this.fitness = fitness;
-		geneFactory = new GeneFactory();
+		this.geneFactory = geneFactory;
 		
 		selector = new RouletteWheelSelector(random);
 		crossover = new InnovationCrossover(random);
 		mutator = new GenomeMutator(geneFactory, random);
-	}
-	
-	public GeneFactory getGeneFactory() {
-		return geneFactory;
 	}
 	
 	public Stream<Population> evolve(Population population) {

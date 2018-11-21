@@ -9,10 +9,6 @@ public class Population {
 	
 	private final List<Genome> genomes;
 	
-	public Population(int size, int inputNodeCount, int outputNodeCount, GeneFactory geneFactory) {
-		this(newGenomes(size, inputNodeCount, outputNodeCount, geneFactory));
-	}
-	
 	public Population(Stream<Genome> genomes) {
 		this.genomes = genomes.collect(toList());
 	}
@@ -23,15 +19,5 @@ public class Population {
 	
 	public int getSize() {
 		return genomes.size();
-	}
-	
-	private static Stream<Genome> newGenomes(int size, int inputNodeCount, int outputNodeCount,
-		GeneFactory geneFactory) {
-		Genome genome = new Genome()
-			.addInputNodes(inputNodeCount, geneFactory)
-			.addOutputNodes(outputNodeCount, geneFactory);
-		
-		return Stream.generate(genome::copy)
-			.limit(size);
 	}
 }

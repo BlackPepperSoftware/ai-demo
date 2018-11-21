@@ -6,8 +6,10 @@ import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.ToIntFunction;
+import java.util.stream.Stream;
 
 import uk.co.blackpepper.neuroevolution.Evolver;
+import uk.co.blackpepper.neuroevolution.GeneFactory;
 import uk.co.blackpepper.neuroevolution.Genome;
 import uk.co.blackpepper.neuroevolution.Population;
 
@@ -89,12 +91,17 @@ public class Pong {
 	}
 	
 	public static void main(String[] args) {
+		GeneFactory geneFactory = new GeneFactory();
 		Random random = new Random();
 		ToIntFunction<Genome> fitness = new MemoizedToIntFunction<>(genome -> evaluateFitness(genome, random, null));
-		Evolver evolver = new Evolver(fitness, random);
-		Population population = new Population(POPULATION_SIZE, 6, 3, evolver.getGeneFactory());
-		AtomicInteger generation = new AtomicInteger();
+		Evolver evolver = new Evolver(fitness, geneFactory, random);
 		
+		Genome initialGenome = new Genome()
+			.addGenes(geneFactory.newInputGenes().limit(6))
+			.addGenes(geneFactory.newOutputGenes().limit(3));
+		Population population = new Population(Stream.generate(initialGenome::copy).limit(POPULATION_SIZE));
+
+		AtomicInteger generation = new AtomicInteger();
 		evolver.evolve(population)
 			.limit(MAX_GENERATIONS)
 			.forEach(nextPopulation -> show(nextPopulation, generation.incrementAndGet(), fitness, random));
