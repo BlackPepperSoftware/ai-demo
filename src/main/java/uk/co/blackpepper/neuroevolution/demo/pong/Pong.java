@@ -105,24 +105,25 @@ public class Pong {
 			.addGenes(geneFactory.newInputGenes().limit(6))
 			.addGenes(geneFactory.newOutputGenes().limit(3));
 		Population population = new Population(Stream.generate(initialGenome::copy).limit(POPULATION_SIZE));
+		
+		PongFrame frame = new PongFrame();
+		frame.setVisible(true);
 
 		AtomicInteger generation = new AtomicInteger();
 		evolver.evolve(population)
 			.limit(MAX_GENERATIONS)
-			.forEach(nextPopulation -> show(nextPopulation, generation.incrementAndGet(), fitness, random));
+			.forEach(nextPopulation -> show(nextPopulation, generation.incrementAndGet(), fitness, random, frame));
 	}
 	
-	private static void show(Population population, int generation, ToIntFunction<Genome> fitness, Random random) {
+	private static void show(Population population, int generation, ToIntFunction<Genome> fitness, Random random,
+		PongFrame frame) {
 		Genome fittest = population.getGenomes()
 			.max(comparingInt(fitness))
 			.orElseThrow(IllegalStateException::new);
 		
 		System.out.format("Generation #%d: %d %s%n", generation, fitness.applyAsInt(fittest), fittest.toGraphviz());
 		
-		PongFrame frame = new PongFrame();
-		frame.setVisible(true);
 		evaluateFitness(fittest, random, frame);
-		frame.dispose();
 	}
 	
 	private static int evaluateFitness(Genome genome, Random random, PongFrame frame) {

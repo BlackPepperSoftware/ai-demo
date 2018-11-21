@@ -93,7 +93,7 @@ public class PongPanel extends JComponent {
 	}
 	
 	private Image getImage() {
-		if (image == null) {
+		if (image == null && screen != null) {
 			image = createImage(screen.getImageSource());
 		}
 		return image;
