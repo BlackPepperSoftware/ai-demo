@@ -20,6 +20,8 @@ import static java.util.stream.Collectors.toMap;
 
 public class Genome {
 	
+	private static final boolean GRAPH_DISABLED_CONNECTIONS = false;
+	
 	private final List<Gene> genes;
 	
 	public Genome(Gene... genes) {
@@ -109,7 +111,7 @@ public class Genome {
 	}
 	
 	public String toGraphviz() {
-		String connections = getConnectionGenes()
+		String connections = (GRAPH_DISABLED_CONNECTIONS ? getConnectionGenes() : getEnabledConnectionGenes())
 			.map(Genome::toGraphviz)
 			.collect(joining(" "));
 		
