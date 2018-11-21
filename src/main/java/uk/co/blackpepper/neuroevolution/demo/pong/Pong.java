@@ -1,6 +1,7 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.ToIntFunction;
@@ -15,7 +16,7 @@ public class Pong {
 	
 	private static final int HEADLESS_TICK_MILLIS = 1;
 	
-	static final int TICK_MILLIS = 100;
+	private static final int TICK_MILLIS = 100;
 	
 	private static final int MAX_TICKS = 1000;
 	
@@ -88,9 +89,10 @@ public class Pong {
 	
 	public static void main(String[] args) {
 		GeneFactory geneFactory = new GeneFactory();
+		Random random = new Random();
 		Population population = new Population(POPULATION_SIZE, 6, 3, geneFactory);
 		
-		ToIntFunction<Genome> fitness = genome -> evaluateFitness(genome, null);
+		ToIntFunction<Genome> fitness = genome -> evaluateFitness(genome, random, null);
 		
 		PongFrame frame = new PongFrame();
 
@@ -106,19 +108,19 @@ public class Pong {
 			System.out.format("Generation #%d: %d %s%n", generation, memoizedFitness.applyAsInt(fittest), fittest);
 			
 			frame.setVisible(true);
-			evaluateFitness(fittest, frame);
+			evaluateFitness(fittest, random, frame);
 			frame.setVisible(false);
 		}
 	}
 	
-	private static int evaluateFitness(Genome genome, PongFrame frame) {
+	private static int evaluateFitness(Genome genome, Random random, PongFrame frame) {
 		boolean headless = (frame == null);
 
 		ActiveListener activeListener = new ActiveListener();
 		TimeAliveListener timeAliveListener = new TimeAliveListener(headless ? MAX_TICKS : 0);
 		Bot bot = new Bot(genome, 1);
 
-		Game game = new Game();
+		Game game = new Game(random);
 		game.addPongListener(activeListener);
 		game.addPongListener(timeAliveListener);
 		game.addPongListener(bot);

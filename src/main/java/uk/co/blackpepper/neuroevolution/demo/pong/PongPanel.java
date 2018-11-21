@@ -11,13 +11,11 @@ import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
-import static uk.co.blackpepper.neuroevolution.demo.pong.Pong.TICK_MILLIS;
-
 public class PongPanel extends JComponent {
 	
 	private final PongListener refreshListener;
 	
-	private final Screen screen;
+	private Screen screen;
 	
 	private Game game;
 	
@@ -30,10 +28,6 @@ public class PongPanel extends JComponent {
 				refresh();
 			}
 		};
-		
-		setGame(new Game());
-		screen = new Screen(game.getScreenSize());
-		
 		bindActions();
 	}
 	
@@ -43,8 +37,9 @@ public class PongPanel extends JComponent {
 		}
 		
 		this.game = game;
-		
 		game.addPongListener(refreshListener);
+		
+		screen = new Screen(game.getScreenSize());
 	}
 	
 	@Override
@@ -56,7 +51,10 @@ public class PongPanel extends JComponent {
 	public void invalidate() {
 		super.invalidate();
 		image = null;
-		game.plot(screen);
+
+		if (game != null) {
+			game.plot(screen);
+		}
 	}
 	
 	private void bindActions() {
@@ -89,9 +87,7 @@ public class PongPanel extends JComponent {
 		return new AbstractAction(name) {
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				setGame(new Game());
-				// TODO: start game better!
-				game.start(TICK_MILLIS);
+				// TODO: reimplement restart game!
 			}
 		};
 	}

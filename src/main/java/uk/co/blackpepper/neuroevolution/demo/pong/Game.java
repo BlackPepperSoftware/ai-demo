@@ -28,7 +28,7 @@ public class Game {
 	
 	private boolean active;
 	
-	public Game() {
+	public Game(Random random) {
 		executor = Executors.newSingleThreadScheduledExecutor();
 		listeners = new EventListenerList();
 		active = false;
@@ -41,7 +41,6 @@ public class Game {
 			: new Bat(0, batY, screenSize.height);
 		bat2 = new Bat(screenSize.width - 1, batY, screenSize.height);
 		
-		Random random = new Random();
 		int ballY = 1 + random.nextInt(screenSize.height - 2);
 		int ballDeltaY = random.nextBoolean() ? -1 : 1;
 		ball = new Ball(screenSize.width / 2, ballY, 1, ballDeltaY, screenSize);
