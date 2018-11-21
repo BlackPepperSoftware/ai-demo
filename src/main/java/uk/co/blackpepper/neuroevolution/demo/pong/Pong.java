@@ -13,8 +13,6 @@ import static java.util.Comparator.comparingInt;
 
 public class Pong {
 	
-	private static final boolean HEADLESS = true;
-	
 	private static final int HEADLESS_TICK_MILLIS = 1;
 	
 	static final int TICK_MILLIS = 100;
@@ -92,12 +90,7 @@ public class Pong {
 		GeneFactory geneFactory = new GeneFactory();
 		Population population = new Population(POPULATION_SIZE, 6, 3, geneFactory);
 		
-		PongFrame frame = HEADLESS ? null : new PongFrame();
-		if (!HEADLESS) {
-			frame.setVisible(true);
-		}
-		
-		ToIntFunction<Genome> fitness = genome -> evaluateFitness(genome, frame);
+		ToIntFunction<Genome> fitness = genome -> evaluateFitness(genome, null);
 		Genome fittest = null;
 		
 		for (int generation = 1; generation <= MAX_GENERATIONS; generation++) {
@@ -112,9 +105,9 @@ public class Pong {
 			System.out.format("Generation #%d: %d %s%n", generation, memoizedFitness.applyAsInt(fittest), fittest);
 		}
 		
-		PongFrame fittestFrame = new PongFrame();
-		fittestFrame.setVisible(true);
-		evaluateFitness(fittest, fittestFrame);
+		PongFrame frame = new PongFrame();
+		frame.setVisible(true);
+		evaluateFitness(fittest, frame);
 	}
 	
 	private static int evaluateFitness(Genome genome, PongFrame frame) {
