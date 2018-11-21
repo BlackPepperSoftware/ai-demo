@@ -42,15 +42,22 @@ public class ConnectionMutator implements Mutator {
 		NodeGene input = nodes.get(random.nextInt(nodes.size()));
 		NodeGene output = nodes.get(random.nextInt(nodes.size()));
 		
-		if (input.equals(output) || input.isOutput() || output.isInput() || genome.connects(input, output)
-			|| isCyclic(genome, input, output)
-		) {
+		if (!isValid(genome, input, output)) {
 			return genome;
 		}
 		
 		double newWeight = random.nextDouble();
 		
 		return genome.addGene(geneFactory.newConnectionGene(input, output, newWeight));
+	}
+	
+	private boolean isValid(Genome genome, NodeGene input, NodeGene output) {
+		return !(input.equals(output)
+			|| input.isOutput()
+			|| output.isInput()
+			|| genome.connects(input, output)
+			|| isCyclic(genome, input, output)
+		);
 	}
 	
 	private boolean isCyclic(Genome genome, NodeGene input, NodeGene output) {
