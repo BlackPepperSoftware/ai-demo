@@ -90,7 +90,7 @@ public class Pong {
 	public static void main(String[] args) {
 		GeneFactory geneFactory = new GeneFactory();
 		Random random = new Random();
-		Population population = new Population(POPULATION_SIZE, 6, 3, geneFactory);
+		Population population = new Population(POPULATION_SIZE, 6, 3, geneFactory, random);
 		
 		ToIntFunction<Genome> fitness = genome -> evaluateFitness(genome, random, null);
 		

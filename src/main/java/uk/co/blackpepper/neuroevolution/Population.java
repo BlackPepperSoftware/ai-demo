@@ -16,21 +16,23 @@ public class Population {
 	
 	private final GeneFactory geneFactory;
 	
+	private final Random random;
+	
 	private final Selector selector;
 	
 	private final Crossover crossover;
 	
 	private final Mutator mutator;
 	
-	public Population(int size, int inputNodeCount, int outputNodeCount, GeneFactory geneFactory) {
-		this(newGenomes(size, inputNodeCount, outputNodeCount, geneFactory), geneFactory);
+	public Population(int size, int inputNodeCount, int outputNodeCount, GeneFactory geneFactory, Random random) {
+		this(newGenomes(size, inputNodeCount, outputNodeCount, geneFactory), geneFactory, random);
 	}
 	
-	public Population(Stream<Genome> genomes, GeneFactory geneFactory) {
+	public Population(Stream<Genome> genomes, GeneFactory geneFactory, Random random) {
 		this.genomes = genomes.collect(toList());
 		this.geneFactory = geneFactory;
+		this.random = random;
 		
-		Random random = new Random();
 		selector = new RouletteWheelSelector(random);
 		crossover = new InnovationCrossover(random);
 		mutator = new GenomeMutator(geneFactory, random);
@@ -49,7 +51,7 @@ public class Population {
 			.collect(toMap(Function.identity(), fitness::applyAsInt));
 		
 		return new Population(Stream.generate(() -> reproduce(fitnesses))
-			.limit(getSize()), geneFactory
+			.limit(getSize()), geneFactory, random
 		);
 	}
 	
