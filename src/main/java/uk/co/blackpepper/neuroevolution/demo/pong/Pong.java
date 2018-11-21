@@ -97,17 +97,19 @@ public class Pong {
 			frame.setVisible(true);
 		}
 		
-		ToIntFunction<Genome> fitness = new MemoizedToIntFunction<>(genome -> evaluateFitness(genome, frame));
+		ToIntFunction<Genome> fitness = genome -> evaluateFitness(genome, frame);
 		Genome fittest = null;
 		
 		for (int generation = 1; generation <= MAX_GENERATIONS; generation++) {
-			population = population.evolve(fitness);
+			ToIntFunction<Genome> memoizedFitness = new MemoizedToIntFunction<>(fitness);
+			
+			population = population.evolve(memoizedFitness);
 			
 			fittest = population.getGenomes()
-				.max(comparingInt(fitness))
+				.max(comparingInt(memoizedFitness))
 				.orElseThrow(IllegalStateException::new);
 			
-			System.out.format("Generation #%d: %d %s%n", generation, fitness.applyAsInt(fittest), fittest);
+			System.out.format("Generation #%d: %d %s%n", generation, memoizedFitness.applyAsInt(fittest), fittest);
 		}
 		
 		PongFrame fittestFrame = new PongFrame();
