@@ -41,8 +41,6 @@ public class Evolver {
 	
 	private final ToIntFunction<Genome> fitness;
 	
-	private final GeneFactory geneFactory;
-	
 	private final Selector selector;
 	
 	private final Crossover crossover;
@@ -72,11 +70,14 @@ public class Evolver {
 	
 	private Evolver(ToIntFunction<Genome> fitness, GeneFactory geneFactory, Random random) {
 		this.fitness = fitness;
-		this.geneFactory = geneFactory;
 		
 		selector = new RouletteWheelSelector(random);
 		crossover = new InnovationCrossover(random);
-		mutator = new GenomeMutator(geneFactory, random);
+		mutator = new CompositeMutator(
+			new ConnectionWeightMutator(random),
+			new ConnectionMutator(geneFactory, random),
+			new NodeMutator(geneFactory, random)
+		);
 	}
 	
 	public Stream<Population> evolve(Population population) {
