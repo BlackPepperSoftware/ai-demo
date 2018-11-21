@@ -75,6 +75,7 @@ public class Evolver {
 		crossover = new InnovationCrossover(random);
 		mutator = new CompositeMutator(
 			new ConnectionWeightMutator(random),
+			new ConnectionEnabledMutator(random),
 			new ConnectionMutator(geneFactory, random),
 			new NodeMutator(geneFactory, random)
 		);

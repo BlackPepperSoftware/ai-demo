@@ -46,12 +46,20 @@ public class ConnectionGene implements Gene {
 		return enabled;
 	}
 	
+	public ConnectionGene enable() {
+		return enable(true);
+	}
+	
 	public ConnectionGene disable() {
-		if (!enabled) {
-			throw new IllegalStateException("Connection gene already disabled");
+		return enable(false);
+	}
+	
+	private ConnectionGene enable(boolean newEnabled) {
+		if (enabled == newEnabled) {
+			throw new IllegalStateException("Connection gene already " + (newEnabled ? "enabled" : "disabled"));
 		}
 		
-		return new ConnectionGene(input, output, weight, false, innovation);
+		return new ConnectionGene(input, output, weight, newEnabled, innovation);
 	}
 	
 	public int getInnovation() {
