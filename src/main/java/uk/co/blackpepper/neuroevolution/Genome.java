@@ -14,6 +14,7 @@ import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -105,6 +106,34 @@ public class Genome {
 	
 	public Genome copy() {
 		return new Genome(this);
+	}
+	
+	public String toGraphviz() {
+		String connections = getConnectionGenes()
+			.map(Genome::toGraphviz)
+			.collect(joining(" "));
+		
+		return String.format("digraph Fittest { "
+			+ "rankdir=LR; { rank=same; %s } %s { rank=same; %s }"
+			+ "}",
+			toGraphviz(getInputGenes()),
+			connections,
+			toGraphviz(getOutputGenes())
+		);
+	}
+	
+	private static String toGraphviz(Stream<NodeGene> nodes) {
+		return nodes
+			.map(node -> String.format("%d;", node.getId()))
+			.collect(joining(" "));
+	}
+	
+	private static String toGraphviz(ConnectionGene connection) {
+		return String.format("%s -> %s%s;",
+			connection.getInput().getId(),
+			connection.getOutput().getId(),
+			connection.isEnabled() ? "" : " [style=\"dashed\"]"
+		);
 	}
 	
 	@Override

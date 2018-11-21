@@ -29,6 +29,10 @@ public class NodeGene implements Gene {
 		return type == NodeType.OUTPUT;
 	}
 	
+	public int getId() {
+		return id;
+	}
+	
 	@Override
 	public NodeGene copy() {
 		return new NodeGene(this);

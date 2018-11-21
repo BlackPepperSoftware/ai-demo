@@ -112,7 +112,7 @@ public class Pong {
 			.max(comparingInt(fitness))
 			.orElseThrow(IllegalStateException::new);
 		
-		System.out.format("Generation #%d: %d %s%n", generation, fitness.applyAsInt(fittest), fittest);
+		System.out.format("Generation #%d: %d %s%n", generation, fitness.applyAsInt(fittest), fittest.toGraphviz());
 		
 		PongFrame frame = new PongFrame();
 		frame.setVisible(true);
