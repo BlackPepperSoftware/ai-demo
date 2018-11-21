@@ -93,8 +93,8 @@ public class Genome {
 	
 	public boolean connects(NodeGene input, NodeGene output) {
 		return getConnectionGenes()
-			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
-			.anyMatch(gene -> gene.equals(new HashSet<>(asList(input, output))));
+			.map(connection -> setOf(connection.getInput(), connection.getOutput()))
+			.anyMatch(nodes -> nodes.equals(setOf(input, output)));
 	}
 	
 	public DoubleStream evaluate(DoubleStream inputs) {
@@ -226,5 +226,9 @@ public class Genome {
 		return (u, v) -> {
 			throw new IllegalStateException(String.format("Duplicate key %s", u));
 		};
+	}
+	
+	private static <T> Set<T> setOf(T... elements) {
+		return new HashSet<>(asList(elements));
 	}
 }
