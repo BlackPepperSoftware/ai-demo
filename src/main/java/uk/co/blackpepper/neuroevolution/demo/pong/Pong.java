@@ -4,9 +4,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.ToIntFunction;
 
-import uk.co.blackpepper.neuroevolution.GeneFactory;
+import uk.co.blackpepper.neuroevolution.Evolver;
 import uk.co.blackpepper.neuroevolution.Genome;
 import uk.co.blackpepper.neuroevolution.Population;
 
@@ -88,29 +89,28 @@ public class Pong {
 	}
 	
 	public static void main(String[] args) {
-		GeneFactory geneFactory = new GeneFactory();
 		Random random = new Random();
-		Population population = new Population(POPULATION_SIZE, 6, 3, geneFactory, random);
+		ToIntFunction<Genome> fitness = new MemoizedToIntFunction<>(genome -> evaluateFitness(genome, random, null));
+		Evolver evolver = new Evolver(fitness, random);
+		Population population = new Population(POPULATION_SIZE, 6, 3, evolver.getGeneFactory());
+		AtomicInteger generation = new AtomicInteger();
 		
-		ToIntFunction<Genome> fitness = genome -> evaluateFitness(genome, random, null);
+		evolver.evolve(population)
+			.limit(MAX_GENERATIONS)
+			.forEach(nextPopulation -> show(nextPopulation, generation.incrementAndGet(), fitness, random));
+	}
+	
+	private static void show(Population population, int generation, ToIntFunction<Genome> fitness, Random random) {
+		Genome fittest = population.getGenomes()
+			.max(comparingInt(fitness))
+			.orElseThrow(IllegalStateException::new);
+		
+		System.out.format("Generation #%d: %d %s%n", generation, fitness.applyAsInt(fittest), fittest);
 		
 		PongFrame frame = new PongFrame();
-
-		for (int generation = 1; generation <= MAX_GENERATIONS; generation++) {
-			ToIntFunction<Genome> memoizedFitness = new MemoizedToIntFunction<>(fitness);
-			
-			population = population.evolve(memoizedFitness);
-			
-			Genome fittest = population.getGenomes()
-				.max(comparingInt(memoizedFitness))
-				.orElseThrow(IllegalStateException::new);
-			
-			System.out.format("Generation #%d: %d %s%n", generation, memoizedFitness.applyAsInt(fittest), fittest);
-			
-			frame.setVisible(true);
-			evaluateFitness(fittest, random, frame);
-			frame.setVisible(false);
-		}
+		frame.setVisible(true);
+		evaluateFitness(fittest, random, frame);
+		frame.dispose();
 	}
 	
 	private static int evaluateFitness(Genome genome, Random random, PongFrame frame) {
