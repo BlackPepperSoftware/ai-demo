@@ -105,6 +105,6 @@ public class PongPanel extends JComponent {
 	
 	private void refresh() {
 		invalidate();
-		repaint(50);
+		repaint();
 	}
 }
