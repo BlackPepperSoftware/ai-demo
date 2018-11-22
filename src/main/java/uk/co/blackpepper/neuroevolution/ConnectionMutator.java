@@ -75,7 +75,7 @@ public class ConnectionMutator implements Mutator {
 		Set<NodeGene> nextVisitedNodes = new HashSet<>(visitedNodes);
 		nextVisitedNodes.add(node);
 		
-		return genome.getEnabledConnectionsTo(node)
+		return genome.getConnectionsTo(node)
 			.anyMatch(connection -> isCyclic(genome, connection.getInput(), nextVisitedNodes));
 	}
 }

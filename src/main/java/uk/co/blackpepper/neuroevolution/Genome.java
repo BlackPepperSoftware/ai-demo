@@ -81,6 +81,11 @@ public class Genome {
 		return getConnections(genes);
 	}
 	
+	public Stream<ConnectionGene> getConnectionsTo(NodeGene node) {
+		return getConnections()
+			.filter(connection -> connection.getOutput() == node);
+	}
+	
 	public Stream<ConnectionGene> getEnabledConnections() {
 		return getConnections()
 			.filter(ConnectionGene::isEnabled);
