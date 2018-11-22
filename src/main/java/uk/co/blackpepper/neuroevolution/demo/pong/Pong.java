@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.ToIntFunction;
 import java.util.stream.Stream;
 
@@ -12,8 +11,6 @@ import uk.co.blackpepper.neuroevolution.Evolver;
 import uk.co.blackpepper.neuroevolution.GeneFactory;
 import uk.co.blackpepper.neuroevolution.Genome;
 import uk.co.blackpepper.neuroevolution.Population;
-
-import static java.util.Comparator.comparingInt;
 
 public class Pong {
 	
@@ -109,20 +106,13 @@ public class Pong {
 		PongFrame frame = new PongFrame();
 		frame.setVisible(true);
 
-		AtomicInteger generation = new AtomicInteger();
-		evolver.evolve(population)
+		System.out.format("Evolving %d generations...%n", MAX_GENERATIONS);
+		
+		Genome fittest = evolver.evolve(population)
 			.limit(MAX_GENERATIONS)
-			.forEach(nextPopulation -> show(nextPopulation, generation.incrementAndGet(), fitness, random, frame));
-	}
-	
-	private static void show(Population population, int generation, ToIntFunction<Genome> fitness, Random random,
-		PongFrame frame) {
-		Genome fittest = population.getGenomes()
-			.max(comparingInt(fitness))
-			.orElseThrow(IllegalStateException::new);
+			.collect(evolver.toFittest());
 		
-		System.out.format("Generation #%d: (%d) %s%n", generation, fitness.applyAsInt(fittest), fittest.toGraphviz());
-		
+		System.out.format("Fittest: (%d) %s%n", fitness.applyAsInt(fittest), fittest.toGraphviz());
 		evaluateFitness(fittest, random, frame);
 	}
 	

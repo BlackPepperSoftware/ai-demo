@@ -1,12 +1,16 @@
 package uk.co.blackpepper.neuroevolution;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
+import java.util.stream.Collector;
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.toMap;
 
 public class Evolver {
@@ -83,6 +87,32 @@ public class Evolver {
 	
 	public Stream<Population> evolve(Population population) {
 		return Stream.generate(new PopulationSupplier(population));
+	}
+	
+	public Collector<Population, AtomicReference<Genome>, Genome> toFittest() {
+		return Collector.of(
+			AtomicReference::new,
+			(ref, population) -> {
+				Genome fittest = getFittest(population);
+				if (fitness.applyAsInt(fittest) > getFitness(ref.get())) {
+					ref.set(fittest);
+				}
+			},
+			(ref1, ref2) -> (getFitness(ref1.get()) > getFitness(ref2.get())) ? ref1 : ref2,
+			AtomicReference::get
+		);
+	}
+	
+	private Genome getFittest(Population population) {
+		return population.getGenomes()
+			.max(comparingInt(fitness))
+			.orElseThrow(IllegalStateException::new);
+	}
+	
+	private int getFitness(Genome genome) {
+		return Optional.ofNullable(genome)
+			.map(fitness::applyAsInt)
+			.orElse(0);
 	}
 	
 	private Genome reproduce(Population population, Map<Genome, Integer> fitnesses) {
