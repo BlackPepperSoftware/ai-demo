@@ -51,7 +51,7 @@ public class ConnectionMutatorTest {
 		
 		Genome result = mutator.mutateConnections(genome);
 		
-		assertThat(result.getConnectionGenes().collect(toList()), contains(
+		assertThat(result.getConnections().collect(toList()), contains(
 			new ConnectionGene(input1, output, 0.1, true, 1),
 			new ConnectionGene(input2, output, 0.2, true, 2),
 			new ConnectionGene(input3, output, 0.3, true, 3)

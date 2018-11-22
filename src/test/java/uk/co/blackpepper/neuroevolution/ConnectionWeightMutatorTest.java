@@ -10,7 +10,6 @@ import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +51,7 @@ public class ConnectionWeightMutatorTest {
 		
 		Genome result = mutator.mutateConnectionWeights(genome);
 		
-		assertThat(result.getConnectionGenes().collect(toList()), contains(
+		assertThat(result.getConnections().collect(toList()), contains(
 			new ConnectionGene(input1, output, 0.08, true, 1),
 			new ConnectionGene(input2, output, 0.2, true, 2),
 			new ConnectionGene(input3, output, 0.32, true, 3)

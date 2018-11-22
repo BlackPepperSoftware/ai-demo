@@ -47,7 +47,7 @@ class GenomeComparator implements Comparator<Genome> {
 	int excessGeneCount(Genome genome1, Genome genome2) {
 		int maxInnovation = Math.min(getMaxInnovation(genome1), getMaxInnovation(genome2));
 		
-		return (int) Stream.concat(genome1.getConnectionGenes(), genome2.getConnectionGenes())
+		return (int) Stream.concat(genome1.getConnections(), genome2.getConnections())
 			.map(ConnectionGene::getInnovation)
 			.filter(innovation -> innovation > maxInnovation)
 			.count();
@@ -56,12 +56,12 @@ class GenomeComparator implements Comparator<Genome> {
 	int disjointGeneCount(Genome genome1, Genome genome2) {
 		int maxInnovation = Math.min(getMaxInnovation(genome1), getMaxInnovation(genome2));
 		
-		Set<Integer> innovations1 = genome1.getConnectionGenes()
+		Set<Integer> innovations1 = genome1.getConnections()
 			.map(ConnectionGene::getInnovation)
 			.filter(innovation -> innovation <= maxInnovation)
 			.collect(toSet());
 		
-		Set<Integer> innovations2 = genome2.getConnectionGenes()
+		Set<Integer> innovations2 = genome2.getConnections()
 			.map(ConnectionGene::getInnovation)
 			.filter(innovation -> innovation <= maxInnovation)
 			.collect(toSet());
@@ -77,7 +77,7 @@ class GenomeComparator implements Comparator<Genome> {
 	
 	double averageWeightDifferences(Genome genome1, Genome genome2) {
 		Map<Integer, List<ConnectionGene>> genesByInnovation =
-			Stream.concat(genome1.getConnectionGenes(), genome2.getConnectionGenes())
+			Stream.concat(genome1.getConnections(), genome2.getConnections())
 				.collect(groupingBy(ConnectionGene::getInnovation));
 		
 		return genesByInnovation.values()
@@ -89,7 +89,7 @@ class GenomeComparator implements Comparator<Genome> {
 	}
 	
 	private static int getMaxInnovation(Genome genome) {
-		return genome.getConnectionGenes()
+		return genome.getConnections()
 			.mapToInt(ConnectionGene::getInnovation)
 			.max()
 			.orElse(0);

@@ -47,9 +47,9 @@ public class NodeMutatorTest {
 		
 		Genome result = mutator.mutateNodes(genome);
 		
-		NodeGene resultNewNode = result.getNodeGenes().collect(toList()).get(3);
-		assertThat(result.getNodeGenes().collect(toList()), contains(input1, input2, output, resultNewNode));
-		assertThat(result.getConnectionGenes().collect(toList()), contains(
+		NodeGene resultNewNode = result.getNodes().collect(toList()).get(3);
+		assertThat(result.getNodes().collect(toList()), contains(input1, input2, output, resultNewNode));
+		assertThat(result.getConnections().collect(toList()), contains(
 			new ConnectionGene(input1, output, 0.1, true, 1),
 			new ConnectionGene(input2, output, 0.2, false, 2),
 			new ConnectionGene(input2, resultNewNode, 1.0, true, 3),

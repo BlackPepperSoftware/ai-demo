@@ -30,7 +30,7 @@ public class NodeMutator implements Mutator {
 	}
 	
 	Genome mutateNodes(Genome genome) {
-		List<ConnectionGene> connections = genome.getEnabledConnectionGenes()
+		List<ConnectionGene> connections = genome.getEnabledConnections()
 			.collect(toList());
 		
 		if (connections.isEmpty()) {

@@ -63,46 +63,46 @@ public class Genome {
 		return genes.stream();
 	}
 	
-	public Stream<NodeGene> getNodeGenes() {
-		return getNodeGenes(genes);
+	public Stream<NodeGene> getNodes() {
+		return getNodes(genes);
 	}
 	
-	public Stream<NodeGene> getInputGenes() {
-		return getNodeGenes(genes)
+	public Stream<NodeGene> getInputs() {
+		return getNodes(genes)
 			.filter(NodeGene::isInput);
 	}
 	
-	public Stream<NodeGene> getOutputGenes() {
-		return getNodeGenes(genes)
+	public Stream<NodeGene> getOutputs() {
+		return getNodes(genes)
 			.filter(NodeGene::isOutput);
 	}
 	
-	public Stream<ConnectionGene> getConnectionGenes() {
-		return getConnectionGenes(genes);
+	public Stream<ConnectionGene> getConnections() {
+		return getConnections(genes);
 	}
 	
-	public Stream<ConnectionGene> getEnabledConnectionGenes() {
-		return getConnectionGenes()
+	public Stream<ConnectionGene> getEnabledConnections() {
+		return getConnections()
 			.filter(ConnectionGene::isEnabled);
 	}
 	
-	public Stream<ConnectionGene> getConnectionsTo(NodeGene node) {
-		return getEnabledConnectionGenes()
+	public Stream<ConnectionGene> getEnabledConnectionsTo(NodeGene node) {
+		return getEnabledConnections()
 			.filter(connection -> connection.getOutput() == node);
 	}
 	
 	public boolean connects(NodeGene input, NodeGene output) {
-		return getConnectionGenes()
+		return getConnections()
 			.map(connection -> setOf(connection.getInput(), connection.getOutput()))
 			.anyMatch(nodes -> nodes.equals(setOf(input, output)));
 	}
 	
 	public DoubleStream evaluate(DoubleStream inputs) {
 		PrimitiveIterator.OfDouble inputsIterator = inputs.iterator();
-		Map<NodeGene, Double> inputValues = getInputGenes()
+		Map<NodeGene, Double> inputValues = getInputs()
 			.collect(toMap(Function.identity(), x -> inputsIterator.nextDouble()));
 		
-		return getOutputGenes()
+		return getOutputs()
 			.mapToDouble(output -> evaluateNode(output, inputValues, new HashSet<>()));
 	}
 	
@@ -111,16 +111,16 @@ public class Genome {
 	}
 	
 	public String toGraphviz() {
-		String connections = (GRAPH_DISABLED_CONNECTIONS ? getConnectionGenes() : getEnabledConnectionGenes())
+		String connections = (GRAPH_DISABLED_CONNECTIONS ? getConnections() : getEnabledConnections())
 			.map(Genome::toGraphviz)
 			.collect(joining(" "));
 		
 		return String.format("digraph Fittest { "
 			+ "rankdir=LR; { rank=same; %s } %s { rank=same; %s }"
 			+ "}",
-			toGraphviz(getInputGenes()),
+			toGraphviz(getInputs()),
 			connections,
-			toGraphviz(getOutputGenes())
+			toGraphviz(getOutputs())
 		);
 	}
 	
@@ -157,7 +157,7 @@ public class Genome {
 		Set<NodeGene> nextVisitedNodes = new HashSet<>(visitedNodes);
 		nextVisitedNodes.add(node);
 		
-		return getConnectionsTo(node)
+		return getEnabledConnectionsTo(node)
 			.mapToDouble(connection
 				-> evaluateNode(connection.getInput(), inputValues, nextVisitedNodes) * connection.getWeight()
 			)
@@ -165,10 +165,10 @@ public class Genome {
 	}
 	
 	private static Stream<Gene> copyGenes(Collection<Gene> genes) {
-		Map<NodeGene, NodeGene> newNodesByOriginal = getNodeGenes(genes)
+		Map<NodeGene, NodeGene> newNodesByOriginal = getNodes(genes)
 			.collect(toMap(gene -> gene, NodeGene::copy, throwingMerger(), LinkedHashMap::new));
 		
-		Stream<ConnectionGene> newConnections = getConnectionGenes(genes)
+		Stream<ConnectionGene> newConnections = getConnections(genes)
 			.map(connection -> copyConnectionGene(connection, newNodesByOriginal));
 		
 		return Stream.concat(newNodesByOriginal.values().stream(), newConnections);
@@ -183,10 +183,10 @@ public class Genome {
 	}
 	
 	private static void checkConnectionGenesNodes(Collection<Gene> genes) {
-		List<NodeGene> nodes = getNodeGenes(genes)
+		List<NodeGene> nodes = getNodes(genes)
 			.collect(toList());
 		
-		boolean valid = getConnectionGenes(genes)
+		boolean valid = getConnections(genes)
 			.flatMap(gene -> Stream.of(gene.getInput(), gene.getOutput()))
 			.allMatch(nodes::contains);
 		
@@ -196,7 +196,7 @@ public class Genome {
 	}
 	
 	private static void checkConnectionGenesUnique(Collection<Gene> genes) {
-		List<Set<NodeGene>> connectionNodes = getConnectionGenes(genes)
+		List<Set<NodeGene>> connectionNodes = getConnections(genes)
 			.map(gene -> new HashSet<>(asList(gene.getInput(), gene.getOutput())))
 			.collect(toList());
 		
@@ -207,13 +207,13 @@ public class Genome {
 		}
 	}
 	
-	private static Stream<NodeGene> getNodeGenes(Collection<Gene> genes) {
+	private static Stream<NodeGene> getNodes(Collection<Gene> genes) {
 		return genes.stream()
 			.filter(gene -> gene instanceof NodeGene)
 			.map(NodeGene.class::cast);
 	}
 	
-	private static Stream<ConnectionGene> getConnectionGenes(Collection<Gene> genes) {
+	private static Stream<ConnectionGene> getConnections(Collection<Gene> genes) {
 		return genes.stream()
 			.filter(gene -> gene instanceof ConnectionGene)
 			.map(ConnectionGene.class::cast);

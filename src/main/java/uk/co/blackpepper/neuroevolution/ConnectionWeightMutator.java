@@ -27,10 +27,10 @@ public class ConnectionWeightMutator implements Mutator {
 	}
 	
 	Genome mutateConnectionWeights(Genome genome) {
-		Stream<ConnectionGene> connections = genome.getConnectionGenes()
+		Stream<ConnectionGene> connections = genome.getConnections()
 			.map(this::mutateConnectionWeight);
 		
-		return new Genome(Stream.concat(genome.getNodeGenes(), connections));
+		return new Genome(Stream.concat(genome.getNodes(), connections));
 	}
 	
 	ConnectionGene mutateConnectionWeight(ConnectionGene connection) {

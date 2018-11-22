@@ -27,7 +27,7 @@ public class ConnectionEnabledMutator implements Mutator {
 	}
 	
 	private Genome doMutate(Genome genome) {
-		List<ConnectionGene> connections = genome.getConnectionGenes().collect(toList());
+		List<ConnectionGene> connections = genome.getConnections().collect(toList());
 		
 		if (connections.isEmpty()) {
 			return genome;

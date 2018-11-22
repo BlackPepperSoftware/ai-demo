@@ -30,12 +30,12 @@ public class InnovationCrossover implements Crossover {
 	// Genes are randomly chosen from either parent at matching genes
 	// all excess or disjoint genes are always included from the more fit parent
 	private Genome crossoverFittest(Genome alpha, Genome beta) {
-		Map<Integer, ConnectionGene> betaConnections = beta.getConnectionGenes()
+		Map<Integer, ConnectionGene> betaConnections = beta.getConnections()
 			.collect(toMap(ConnectionGene::getInnovation, Function.identity()));
 		
-		List<Gene> childGenes = alpha.getNodeGenes().collect(toList());
+		List<Gene> childGenes = alpha.getNodes().collect(toList());
 		
-		for (ConnectionGene alphaConnection : alpha.getConnectionGenes().collect(toList())) {
+		for (ConnectionGene alphaConnection : alpha.getConnections().collect(toList())) {
 			ConnectionGene betaConnection = betaConnections.get(alphaConnection.getInnovation());
 			
 			childGenes.add(crossoverGene(alphaConnection, betaConnection));

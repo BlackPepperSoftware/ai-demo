@@ -32,7 +32,7 @@ public class ConnectionMutator implements Mutator {
 	}
 	
 	Genome mutateConnections(Genome genome) {
-		List<NodeGene> nodes = genome.getNodeGenes()
+		List<NodeGene> nodes = genome.getNodes()
 			.collect(toList());
 		
 		if (nodes.isEmpty()) {
@@ -75,7 +75,7 @@ public class ConnectionMutator implements Mutator {
 		Set<NodeGene> nextVisitedNodes = new HashSet<>(visitedNodes);
 		nextVisitedNodes.add(node);
 		
-		return genome.getConnectionsTo(node)
+		return genome.getEnabledConnectionsTo(node)
 			.anyMatch(connection -> isCyclic(genome, connection.getInput(), nextVisitedNodes));
 	}
 }
