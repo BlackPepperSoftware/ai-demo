@@ -17,7 +17,7 @@ import static java.util.Comparator.comparingInt;
 
 public class Pong {
 	
-	private static final int HEADLESS_TICK_MILLIS = 1;
+	private static final int HEADLESS_TICK_MILLIS = 0;
 	
 	private static final int TICK_MILLIS = 100;
 	

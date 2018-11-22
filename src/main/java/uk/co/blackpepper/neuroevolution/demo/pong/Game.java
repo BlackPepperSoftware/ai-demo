@@ -75,8 +75,14 @@ public class Game {
 			throw new IllegalStateException("Game already started");
 		}
 		
-		executor.scheduleAtFixedRate(this::tick, 0, tickMillis, TimeUnit.MILLISECONDS);
 		active = true;
+		
+		if (tickMillis == 0) {
+			executor.schedule(this::tickUntilStopped, 0, TimeUnit.MILLISECONDS);
+		}
+		else {
+			executor.scheduleAtFixedRate(this::tick, 0, tickMillis, TimeUnit.MILLISECONDS);
+		}
 	}
 	
 	public void stop() {
@@ -124,6 +130,12 @@ public class Game {
 		
 		if (ball.out()) {
 			stop();
+		}
+	}
+	
+	private void tickUntilStopped() {
+		while (active) {
+			tick();
 		}
 	}
 	
