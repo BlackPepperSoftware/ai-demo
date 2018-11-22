@@ -4,6 +4,8 @@ public class Bat implements Bounceable {
 	
 	public static final int LENGTH = 6;
 	
+	private static final int OUT_LENGTH = 2;
+	
 	private final int x0;
 	
 	private int y0;
@@ -32,7 +34,7 @@ public class Bat implements Bounceable {
 	
 	@Override
 	public void move(int dy) {
-		y0 = Math.min(Math.max(y0 + dy, 0), screenHeight - LENGTH);
+		y0 = Math.min(Math.max(y0 + dy, OUT_LENGTH), screenHeight - LENGTH - OUT_LENGTH);
 	}
 	
 	@Override
