@@ -2,7 +2,7 @@ package uk.co.blackpepper.neuroevolution.demo.pong;
 
 public class Bat implements Bounceable {
 	
-	public static final int LENGTH = 6;
+	public static final int LENGTH = 4;
 	
 	private static final int OUT_LENGTH = 2;
 	
