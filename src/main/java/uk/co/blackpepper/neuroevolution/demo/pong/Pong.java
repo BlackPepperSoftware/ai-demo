@@ -93,6 +93,8 @@ public class Pong {
 	}
 	
 	public static void main(String[] args) {
+		System.setProperty("sun.java2d.opengl", "true");
+		
 		GeneFactory geneFactory = new GeneFactory();
 		Random random = new Random();
 		ToIntFunction<Genome> fitness = new MemoizedToIntFunction<>(genome -> evaluateFitness(genome, random, null));
