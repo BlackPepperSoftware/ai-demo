@@ -19,7 +19,7 @@ public class Pong {
 	
 	private static final int HEADLESS_TICK_MILLIS = 0;
 	
-	private static final int TICK_MILLIS = 100;
+	private static final int TICK_MILLIS = 50;
 	
 	private static final int MAX_TICKS = 1000;
 	
