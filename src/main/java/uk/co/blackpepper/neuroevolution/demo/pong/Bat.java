@@ -1,10 +1,17 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Bat implements Bounceable {
 	
-	public static final int LENGTH = 4;
+	public static final int WIDTH = 32;
 	
-	private static final int OUT_LENGTH = 2;
+	public static final int HEIGHT = 128;
+	
+	public static final int SPEED = 8;
+	
+	private static final int OUT_LENGTH = 64;
 	
 	private final int x0;
 	
@@ -19,28 +26,41 @@ public class Bat implements Bounceable {
 	}
 	
 	@Override
+	public int getX() {
+		return x0;
+	}
+	
+	@Override
 	public int getY() {
 		return y0;
 	}
 	
 	@Override
-	public boolean touches(Ball ball) {
-		if (ball.getX() < x0 - 1 || ball.getX() > x0 + 1) {
-			return false;
-		}
+	public int getWidth() {
+		return WIDTH;
+	}
+	
+	@Override
+	public int getHeight() {
+		return HEIGHT;
+	}
+	
+	@Override
+	public void moveUp() {
+		y0 = Math.max(y0 - SPEED, OUT_LENGTH);
+	}
+	
+	@Override
+	public void moveDown() {
+		y0 = Math.min(y0 + SPEED, screenHeight - HEIGHT - OUT_LENGTH);
+	}
+	
+	@Override
+	public void plot(Graphics graphics) {
+		graphics.setColor(Color.WHITE);
 		
-		return ball.getY() >= y0 - 1 && ball.getY() < y0 + LENGTH + 1;
-	}
-	
-	@Override
-	public void move(int dy) {
-		y0 = Math.min(Math.max(y0 + dy, OUT_LENGTH), screenHeight - LENGTH - OUT_LENGTH);
-	}
-	
-	@Override
-	public void plot(Screen screen) {
-		for (int y = y0; y < y0 + LENGTH; y++) {
-			screen.plotPixel(x0, y);
+		for (int y = y0; y < y0 + HEIGHT; y++) {
+			graphics.fillRect(x0, y0, WIDTH, HEIGHT);
 		}
 	}
 }

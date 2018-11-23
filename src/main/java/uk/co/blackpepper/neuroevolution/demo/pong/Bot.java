@@ -1,5 +1,6 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
+import java.util.Arrays;
 import java.util.stream.DoubleStream;
 
 import uk.co.blackpepper.neuroevolution.Genome;
@@ -22,9 +23,11 @@ public class Bot extends PongAdapter {
 			normalize(game.getBat2().getY(), 0, game.getScreenSize().height),
 			normalize(game.getBall().getX(), 0, game.getScreenSize().width),
 			normalize(game.getBall().getY(), 0, game.getScreenSize().height),
-			normalize(game.getBall().getDeltaX(), -1, 1),
-			normalize(game.getBall().getDeltaY(), -1, 1)
+			normalize(game.getBall().getDeltaX(), -Bat.SPEED, Bat.SPEED),
+			normalize(game.getBall().getDeltaY(), -Bat.SPEED, Bat.SPEED)
 		));
+		
+		Bounceable bat = (player == 0) ? game.getBat1() : game.getBat2();
 		
 		switch (getMaxIndex(outputs.toArray())) {
 			case 0:
@@ -32,11 +35,11 @@ public class Bot extends PongAdapter {
 				break;
 			
 			case 1:
-				game.moveBat(player, -1);
+				bat.moveUp();
 				break;
 			
 			case 2:
-				game.moveBat(player, 1);
+				bat.moveDown();
 				break;
 		}
 	}

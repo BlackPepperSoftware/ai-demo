@@ -1,6 +1,11 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
+import java.awt.Color;
+import java.awt.Graphics;
+
 public class Wall implements Bounceable {
+	
+	private static final int WIDTH = 32;
 	
 	private final int x0;
 	
@@ -12,24 +17,38 @@ public class Wall implements Bounceable {
 	}
 	
 	@Override
+	public int getX() {
+		return x0;
+	}
+	
+	@Override
 	public int getY() {
 		return 0;
 	}
 	
 	@Override
-	public boolean touches(Ball ball) {
-		return ball.getX() >= x0 - 1 && ball.getX() <= x0 + 1;
+	public int getWidth() {
+		return WIDTH;
 	}
 	
 	@Override
-	public void move(int dy) {
+	public int getHeight() {
+		return screenHeight;
+	}
+	
+	@Override
+	public void moveUp() {
 		throw new UnsupportedOperationException();
 	}
 	
 	@Override
-	public void plot(Screen screen) {
-		for (int y = 0; y < screenHeight; y++) {
-			screen.plotPixel(x0, y);
-		}
+	public void moveDown() {
+		throw new UnsupportedOperationException();
+	}
+	
+	@Override
+	public void plot(Graphics graphics) {
+		graphics.setColor(Color.WHITE);
+		graphics.fillRect(x0, 0, getWidth(), getHeight());
 	}
 }

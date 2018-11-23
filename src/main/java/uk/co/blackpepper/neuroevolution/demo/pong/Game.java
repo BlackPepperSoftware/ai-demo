@@ -1,6 +1,8 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -10,7 +12,7 @@ import javax.swing.event.EventListenerList;
 
 public class Game {
 	
-	private static final Dimension SIZE = new Dimension(40, 32);
+	private static final Dimension SIZE = new Dimension(1280, 1024);
 	
 	private static final boolean ONE_PLAYER = true;
 	
@@ -35,15 +37,16 @@ public class Game {
 		
 		screenSize = SIZE;
 
-		int batY = (screenSize.height - Bat.LENGTH) / 2;
+		int batY = (screenSize.height - Bat.HEIGHT) / 2;
 		bat1 = ONE_PLAYER
 			? new Wall(0, screenSize.height)
 			: new Bat(0, batY, screenSize.height);
-		bat2 = new Bat(screenSize.width - 1, batY, screenSize.height);
+		bat2 = new Bat(screenSize.width - Bat.WIDTH - 1, batY, screenSize.height);
 		
-		int ballY = 1 + random.nextInt(screenSize.height - 2);
-		int ballDeltaY = random.nextBoolean() ? -1 : 1;
-		ball = new Ball(screenSize.width / 2, ballY, 1, ballDeltaY, screenSize);
+		int ballSpeed = 8;
+		int ballY = random.nextInt(screenSize.height - Ball.SIZE);
+		int ballDeltaY = random.nextBoolean() ? -ballSpeed : ballSpeed;
+		ball = new Ball(screenSize.width / 2, ballY, ballSpeed, ballDeltaY, screenSize);
 	}
 	
 	public void addPongListener(PongListener listener) {
@@ -95,11 +98,13 @@ public class Game {
 		fireStoppedEvent();
 	}
 	
-	public void plot(Screen screen) {
-		screen.clear();
-		bat1.plot(screen);
-		bat2.plot(screen);
-		ball.plot(screen);
+	public void plot(Graphics graphics) {
+		graphics.setColor(Color.BLACK);
+		graphics.fillRect(0, 0, graphics.getClipBounds().width, graphics.getClipBounds().height);
+
+		bat1.plot(graphics);
+		bat2.plot(graphics);
+		ball.plot(graphics);
 	}
 	
 	public void tick() {
@@ -112,11 +117,6 @@ public class Game {
 		}
 	}
 	
-	public void moveBat(int index, int dy) {
-		Bounceable bat = index == 0 ? bat1 : bat2;
-		bat.move(dy);
-	}
-	
 	private void tickGame() {
 		if (!active) {
 			return;
@@ -124,9 +124,8 @@ public class Game {
 		
 		ball.move();
 		
-		if (bat1.touches(ball) || bat2.touches(ball)) {
-			ball.bounce();
-		}
+		ball.collide(bat1);
+		ball.collide(bat2);
 		
 		if (ball.out()) {
 			stop();

@@ -19,9 +19,9 @@ public class Pong {
 	
 	private static final int HEADLESS_TICK_MILLIS = 0;
 	
-	private static final int TICK_MILLIS = 50;
+	private static final int TICK_MILLIS = 10;
 	
-	private static final int MAX_TICKS = 1000;
+	private static final int MAX_TICKS = 1000 * 16 * 10;
 	
 	private static final int POPULATION_SIZE = 500;
 	

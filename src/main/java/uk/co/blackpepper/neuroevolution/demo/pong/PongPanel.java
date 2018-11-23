@@ -1,7 +1,6 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -15,17 +14,13 @@ public class PongPanel extends JComponent {
 	
 	private final PongListener refreshListener;
 	
-	private Screen screen;
-	
 	private Game game;
-	
-	private Image image;
 	
 	public PongPanel() {
 		refreshListener = new PongAdapter() {
 			@Override
 			public void tick(Game game) {
-				refresh();
+				repaint();
 			}
 		};
 		bindActions();
@@ -38,37 +33,27 @@ public class PongPanel extends JComponent {
 		
 		this.game = game;
 		game.addPongListener(refreshListener);
-		
-		screen = new Screen(game.getScreenSize());
 	}
 	
 	@Override
 	protected void paintComponent(Graphics graphics) {
-		graphics.drawImage(getImage(), 0, 0, getWidth(), getHeight(), this);
-	}
-	
-	@Override
-	public void invalidate() {
-		super.invalidate();
-		image = null;
-
 		if (game != null) {
-			game.plot(screen);
+			game.plot(graphics);
 		}
 	}
 	
 	private void bindActions() {
 		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), "bat1Up");
-		getActionMap().put("bat1Up", moveBatAction("bat1Up", (event) -> game.moveBat(0, -1)));
+		getActionMap().put("bat1Up", moveBatAction("bat1Up", (event) -> game.getBat1().moveUp()));
 		
 		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, 0), "bat1Down");
-		getActionMap().put("bat1Down", moveBatAction("bat1Down", (event) -> game.moveBat(0, 1)));
+		getActionMap().put("bat1Down", moveBatAction("bat1Down", (event) -> game.getBat1().moveDown()));
 		
 		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_QUOTE, 0), "bat2Up");
-		getActionMap().put("bat2Up", moveBatAction("bat2Up", (event) -> game.moveBat(1, -1)));
+		getActionMap().put("bat2Up", moveBatAction("bat2Up", (event) -> game.getBat2().moveUp()));
 		
 		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SLASH, 0), "bat2Down");
-		getActionMap().put("bat2Down", moveBatAction("bat2Down", (event) -> game.moveBat(1, 1)));
+		getActionMap().put("bat2Down", moveBatAction("bat2Down", (event) -> game.getBat2().moveDown()));
 		
 		getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "restart");
 		getActionMap().put("restart", restartAction("restart"));
@@ -90,17 +75,5 @@ public class PongPanel extends JComponent {
 				// TODO: reimplement restart game!
 			}
 		};
-	}
-	
-	private Image getImage() {
-		if (image == null && screen != null) {
-			image = createImage(screen.getImageSource());
-		}
-		return image;
-	}
-	
-	private void refresh() {
-		invalidate();
-		repaint();
 	}
 }

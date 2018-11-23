@@ -1,12 +1,20 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
+import java.awt.Graphics;
+
 public interface Bounceable {
+	
+	int getX();
 	
 	int getY();
 	
-	boolean touches(Ball ball);
+	int getWidth();
 	
-	void move(int dy);
+	int getHeight();
 	
-	void plot(Screen screen);
+	void moveUp();
+	
+	void moveDown();
+	
+	void plot(Graphics graphics);
 }
