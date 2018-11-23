@@ -27,6 +27,8 @@ public class Pong {
 	
 	private static final int MAX_GENERATIONS = 20;
 	
+	private static final boolean PLAY_GENERATIONS = true;
+	
 	private static class ActiveListener extends PongAdapter {
 		private final CountDownLatch active = new CountDownLatch(1);
 		
@@ -111,19 +113,26 @@ public class Pong {
 
 		AtomicInteger generation = new AtomicInteger();
 		Genome fittest = evolver.evolve(population)
-			.map(nextPopulation -> show(nextPopulation, generation.incrementAndGet(), fitness))
+			.map(nextPopulation -> show(nextPopulation, generation.incrementAndGet(), fitness, random, frame))
 			.limit(MAX_GENERATIONS)
 			.collect(evolver.toFittest());
 		
-		evaluateFitness(fittest, random, frame);
+		if (!PLAY_GENERATIONS) {
+			evaluateFitness(fittest, random, frame);
+		}
 	}
 	
-	private static Population show(Population population, int generation, ToIntFunction<Genome> fitness) {
+	private static Population show(Population population, int generation, ToIntFunction<Genome> fitness, Random random,
+		PongFrame frame) {
 		Genome fittest = population.getGenomes()
 			.max(comparingInt(fitness))
 			.orElseThrow(IllegalStateException::new);
 		
 		System.out.format("Generation #%d: (%d) %s%n", generation, fitness.applyAsInt(fittest), fittest.toGraphviz());
+
+		if (PLAY_GENERATIONS) {
+			evaluateFitness(fittest, random, frame);
+		}
 		
 		return population;
 	}
