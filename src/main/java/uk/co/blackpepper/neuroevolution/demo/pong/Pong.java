@@ -23,7 +23,7 @@ public class Pong {
 	
 	private static final int MAX_TICKS = 1000;
 	
-	private static final int POPULATION_SIZE = 100;
+	private static final int POPULATION_SIZE = 500;
 	
 	private static final int MAX_GENERATIONS = 20;
 	
