@@ -1,5 +1,8 @@
 package uk.co.blackpepper.neuroevolution;
 
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static uk.co.blackpepper.neuroevolution.NodeGene.NodeType.HIDDEN;
@@ -8,13 +11,10 @@ import static uk.co.blackpepper.neuroevolution.NodeGene.NodeType.OUTPUT;
 
 public class GeneFactory {
 	
-	private int id;
-	
-	private int innovation;
-	
+    private Innovator innovator;
+
 	public GeneFactory() {
-		id = 1;
-		innovation = 1;
+		innovator = new Innovator();
 	}
 	
 	public NodeGene newInputGene() {
@@ -33,13 +33,14 @@ public class GeneFactory {
 		return Stream.generate(this::newOutputGene);
 	}
 	
-	public NodeGene newHiddenGene() {
-		return new NodeGene(HIDDEN, nextId());
+	public NodeGene newHiddenGene(int input, int output) {
+		return new NodeGene(HIDDEN, innovator.retrieveOrGenerateNodeIdBetween(input, output));
 	}
 	
 	public ConnectionGene newConnectionGene(NodeGene input, NodeGene output, double weight) {
-		return new ConnectionGene(input, output, weight, true, nextInnovation());
+		return new ConnectionGene(input, output, weight, true, innovator.retrieveOrGenerateInnovationBetween(input.getId(), output.getId()));
 	}
+
 	public Stream<? extends Gene> fullyConnected(Stream<NodeGene> inputs, Stream<NodeGene> outputs, Random random) {
         List<NodeGene> inputNodes = inputs.collect(Collectors.toList());
         List<NodeGene> outputNodes = outputs.collect(Collectors.toList());
@@ -55,10 +56,6 @@ public class GeneFactory {
     }
 	
 	private int nextId() {
-		return id++;
-	}
-	
-	private int nextInnovation() {
-		return innovation++;
+		return innovator.nextNodeId();
 	}
 }

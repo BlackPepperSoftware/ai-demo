@@ -31,8 +31,8 @@ public class GenomeComparatorTest {
 		input2 = geneFactory.newInputGene();
 		input3 = geneFactory.newInputGene();
 		output = geneFactory.newOutputGene();
-		hidden1 = geneFactory.newHiddenGene();
-		hidden2 = geneFactory.newHiddenGene();
+		hidden1 = geneFactory.newHiddenGene(input1.getId(), output.getId());
+		hidden2 = geneFactory.newHiddenGene(input2.getId(), output.getId());
 	}
 	
 	@Test

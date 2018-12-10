@@ -38,11 +38,17 @@ public class NodeMutator implements Mutator {
 		}
 		
 		ConnectionGene connection = connections.get(random.nextInt(connections.size()));
-		NodeGene newNode = geneFactory.newHiddenGene();
-		
-		return genome.disableGene(connection)
-			.addGene(newNode)
-			.addGene(geneFactory.newConnectionGene(connection.getInput(), newNode, 1))
-			.addGene(geneFactory.newConnectionGene(newNode, connection.getOutput(), connection.getWeight()));
+		NodeGene newNode = geneFactory.newHiddenGene(connection.getInput().getId(), connection.getOutput().getId());
+
+		//a previously disabled connection has become enabled through cross over. This is legal but will mean that the mutation for split already exists
+		boolean mutationAlreadyExists = genome.getNodes()
+                .anyMatch(node -> node.getId() == newNode.getId());
+
+		return mutationAlreadyExists ?
+                genome.copy() :
+                genome.disableGene(connection)
+                        .addGene(newNode)
+                        .addGene(geneFactory.newConnectionGene(connection.getInput(), newNode, 1))
+                        .addGene(geneFactory.newConnectionGene(newNode, connection.getOutput(), connection.getWeight()));
 	}
 }
