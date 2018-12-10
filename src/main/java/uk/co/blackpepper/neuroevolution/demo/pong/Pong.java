@@ -104,10 +104,13 @@ public class Pong {
 			.geneFactory(geneFactory)
 			.random(random)
 			.build();
-		
+
 		Genome initialGenome = new Genome()
-			.addGenes(geneFactory.newInputGenes().limit(6))
-			.addGenes(geneFactory.newOutputGenes().limit(3));
+            .addGenes(geneFactory.fullyConnected(
+                            geneFactory.newInputGenes().limit(6),
+                            geneFactory.newOutputGenes().limit(3),
+                            random));
+
 		Population population = new Population(Stream.generate(initialGenome::copy).limit(POPULATION_SIZE));
 		
 		PongFrame frame = new PongFrame();

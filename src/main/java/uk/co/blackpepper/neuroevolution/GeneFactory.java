@@ -40,6 +40,19 @@ public class GeneFactory {
 	public ConnectionGene newConnectionGene(NodeGene input, NodeGene output, double weight) {
 		return new ConnectionGene(input, output, weight, true, nextInnovation());
 	}
+	public Stream<? extends Gene> fullyConnected(Stream<NodeGene> inputs, Stream<NodeGene> outputs, Random random) {
+        List<NodeGene> inputNodes = inputs.collect(Collectors.toList());
+        List<NodeGene> outputNodes = outputs.collect(Collectors.toList());
+
+        Stream<ConnectionGene> connections = inputNodes.stream()
+                .flatMap(in -> outputNodes.stream()
+                        .map(out -> {
+                            double weight = 2 * random.nextDouble() - 1;
+                            return newConnectionGene(in, out, weight);
+        }));
+
+        return Stream.concat(Stream.concat(inputNodes.stream(), outputNodes.stream()), connections);
+    }
 	
 	private int nextId() {
 		return id++;
