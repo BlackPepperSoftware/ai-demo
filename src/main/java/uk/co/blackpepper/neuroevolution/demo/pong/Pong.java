@@ -12,6 +12,7 @@ import uk.co.blackpepper.neuroevolution.Evolver;
 import uk.co.blackpepper.neuroevolution.GeneFactory;
 import uk.co.blackpepper.neuroevolution.Genome;
 import uk.co.blackpepper.neuroevolution.Population;
+import uk.co.blackpepper.neuroevolution.Species;
 
 import static java.util.Comparator.comparingInt;
 
@@ -25,7 +26,7 @@ public class Pong {
 	
 	private static final int POPULATION_SIZE = 500;
 	
-	private static final int MAX_GENERATIONS = 20;
+	private static final int MAX_GENERATIONS = 50;
 	
 	private static final boolean PLAY_GENERATIONS = true;
 	
@@ -111,7 +112,7 @@ public class Pong {
                             geneFactory.newOutputGenes().limit(3),
                             random));
 
-		Population population = new Population(Stream.generate(initialGenome::copy).limit(POPULATION_SIZE));
+		Population population = new Population(Stream.generate(() -> new Species(Stream.generate(initialGenome::copy).limit(POPULATION_SIZE))).limit(1));
 		
 		PongFrame frame = new PongFrame();
 		frame.setVisible(true);

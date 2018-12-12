@@ -7,17 +7,23 @@ import static java.util.stream.Collectors.toList;
 
 public class Population {
 	
-	private final List<Genome> genomes;
-	
-	public Population(Stream<Genome> genomes) {
-		this.genomes = genomes.collect(toList());
-	}
+	private final List<Species> species;
+
+	public Population(Stream<Species> species) {
+	    this.species = species.collect(toList());
+    }
 	
 	public Stream<Genome> getGenomes() {
-		return genomes.stream();
+		return species.stream().flatMap(Species::getGenomes);
 	}
+
+	public Stream<Species> getSpecies() {
+	    return species.stream();
+    }
 	
-	public int getSize() {
-		return genomes.size();
+	public long getSize() {
+		return species.stream()
+                .mapToLong(Species::getSize)
+                .sum();
 	}
 }

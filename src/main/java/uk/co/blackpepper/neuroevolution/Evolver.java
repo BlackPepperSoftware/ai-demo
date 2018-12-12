@@ -1,5 +1,7 @@
 package uk.co.blackpepper.neuroevolution;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -8,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparingInt;
@@ -50,6 +53,8 @@ public class Evolver {
 	private final Crossover crossover;
 	
 	private final Mutator mutator;
+
+	private final GenomeComparator genomeComparator;
 	
 	private class PopulationSupplier implements Supplier<Population> {
 		
@@ -63,18 +68,14 @@ public class Evolver {
 		public Population get() {
 			Map<Genome, Integer> fitnesses = population.getGenomes()
 				.collect(toMap(Function.identity(), fitness::applyAsInt));
-			
-			population = new Population(Stream.generate(() -> reproduce(population, fitnesses))
-				.limit(population.getSize())
-			);
-			
-			return population;
+
+			return new Population(reproduce(population, fitnesses));
 		}
 	}
 	
 	private Evolver(ToIntFunction<Genome> fitness, GeneFactory geneFactory, Random random) {
 		this.fitness = fitness;
-		
+
 		selector = new RouletteWheelSelector(random);
 		crossover = new InnovationCrossover(random);
 		mutator = new CompositeMutator(
@@ -83,12 +84,13 @@ public class Evolver {
 			new ConnectionMutator(geneFactory, random),
 			new NodeMutator(geneFactory, random)
 		);
+		genomeComparator = new GenomeComparator();
 	}
-	
+
 	public Stream<Population> evolve(Population population) {
 		return Stream.generate(new PopulationSupplier(population));
 	}
-	
+
 	public Collector<Population, AtomicReference<Genome>, Genome> toFittest() {
 		return Collector.of(
 			AtomicReference::new,
@@ -102,24 +104,55 @@ public class Evolver {
 			AtomicReference::get
 		);
 	}
-	
+
 	private Genome getFittest(Population population) {
 		return population.getGenomes()
 			.max(comparingInt(fitness))
 			.orElseThrow(IllegalStateException::new);
 	}
-	
+
 	private int getFitness(Genome genome) {
 		return Optional.ofNullable(genome)
 			.map(fitness::applyAsInt)
 			.orElse(0);
 	}
-	
-	private Genome reproduce(Population population, Map<Genome, Integer> fitnesses) {
-		Genome parent1 = selector.select(population.getGenomes(), fitnesses);
-		Genome parent2 = selector.select(population.getGenomes(), fitnesses);
-		Genome child = crossover.crossover(parent1, parent2, fitnesses);
-		
-		return mutator.mutate(child);
-	}
+
+    private Stream<Species> reproduce(Population population, Map<Genome, Integer> fitnesses) {
+
+        List<Species> newSpecies = population.getSpecies()
+                .map(species -> new Species(Stream.generate(() -> reproduce(species, fitnesses)).limit(species.getSize())))
+                .collect(Collectors.toList());
+
+        List<Species> speciesBelonging = newSpecies.stream()
+                .map(species -> new Species(species.getGenomes().filter(genome -> genomeComparator.compare(genome, species.getRepresentative()) == 0)))
+                .collect(Collectors.toList());
+
+        List<Genome> genomesThatDontBelong = newSpecies.stream()
+                .flatMap(species -> species.getGenomes().filter(genome -> genomeComparator.compare(genome, species.getRepresentative()) != 0))
+                .collect(Collectors.toList());
+
+        genomesThatDontBelong.forEach(genome ->
+            speciesBelonging.stream()
+                    .filter(species -> genomeComparator.compare(genome, species.getRepresentative()) == 0).findFirst()
+                        .orElseGet(() -> {
+                            Species species = new Species();
+                            speciesBelonging.add(species);
+                            return species;
+                        }).add(genome)
+        );
+
+        return speciesBelonging.stream();
+    }
+
+    private Genome reproduce(Species species, Map<Genome, Integer> fitnesses) {
+
+        Map<Genome, Integer> speciesFitnesses = new HashMap<>();
+        species.getGenomes().forEach(genome -> speciesFitnesses.put(genome, fitnesses.get(genome)));
+
+        Genome parent1 = selector.select(species.getGenomes(), speciesFitnesses);
+        Genome parent2 = selector.select(species.getGenomes(), speciesFitnesses);
+        Genome child = crossover.crossover(parent1, parent2, speciesFitnesses);
+
+        return mutator.mutate(child);
+    }
 }
