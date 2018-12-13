@@ -106,13 +106,7 @@ public class Pong {
 			.random(random)
 			.build();
 
-		Genome initialGenome = new Genome()
-            .addGenes(geneFactory.fullyConnected(
-                            geneFactory.newInputGenes().limit(6),
-                            geneFactory.newOutputGenes().limit(3),
-                            random));
-
-		Population population = new Population(Stream.generate(() -> new Species(Stream.generate(initialGenome::copy).limit(POPULATION_SIZE))).limit(1));
+        Population population = new Population(Stream.generate(() -> new Species(Stream.generate(() -> generateARandomFullyConnectedGenome(random, geneFactory)).limit(POPULATION_SIZE))).limit(1));
 		
 		PongFrame frame = new PongFrame();
 		frame.setVisible(true);
@@ -127,8 +121,16 @@ public class Pong {
 			evaluateFitness(fittest, random, frame);
 		}
 	}
-	
-	private static Population show(Population population, int generation, ToIntFunction<Genome> fitness, Random random,
+
+    private static Genome generateARandomFullyConnectedGenome(Random random, GeneFactory geneFactory) {
+        return new Genome()
+                .addGenes(geneFactory.fullyConnected(
+                                geneFactory.newInputGenes().limit(6),
+                                geneFactory.newOutputGenes().limit(3),
+                                random));
+    }
+
+    private static Population show(Population population, int generation, ToIntFunction<Genome> fitness, Random random,
 		PongFrame frame) {
 		Genome fittest = population.getGenomes()
 			.max(comparingInt(fitness))
