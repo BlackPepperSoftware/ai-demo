@@ -7,7 +7,7 @@ import static java.util.stream.Collectors.toList;
 
 public class NodeMutator implements Mutator {
 	
-	private static final double RATE = 0.5;
+	private static final double RATE = 0.4;
 	
 	private final GeneFactory geneFactory;
 	

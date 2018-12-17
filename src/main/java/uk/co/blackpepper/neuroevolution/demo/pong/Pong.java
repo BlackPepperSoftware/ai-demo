@@ -1,11 +1,14 @@
 package uk.co.blackpepper.neuroevolution.demo.pong;
 
+import static java.util.Comparator.comparingInt;
+
 import java.util.Map;
 import java.util.Random;
 import java.util.WeakHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.ToIntFunction;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import uk.co.blackpepper.neuroevolution.Evolver;
@@ -14,17 +17,17 @@ import uk.co.blackpepper.neuroevolution.Genome;
 import uk.co.blackpepper.neuroevolution.Population;
 import uk.co.blackpepper.neuroevolution.Species;
 
-import static java.util.Comparator.comparingInt;
-
 public class Pong {
 	
+	private static final int SIMULATE_BEST_OF = 3;
+
 	private static final int HEADLESS_TICK_MILLIS = 0;
-	
+
 	private static final int TICK_MILLIS = 50;
 	
 	private static final int MAX_TICKS = 1000;
 	
-	private static final int POPULATION_SIZE = 500;
+	private static final int POPULATION_SIZE = 1000;
 	
 	private static final int MAX_GENERATIONS = 50;
 	
@@ -47,7 +50,7 @@ public class Pong {
 			}
 		}
 	}
-	
+
 	private static class TimeAliveListener extends PongAdapter {
 		private final int maxTicks;
 		
@@ -106,7 +109,7 @@ public class Pong {
 			.random(random)
 			.build();
 
-        Population population = new Population(Stream.generate(() -> new Species(Stream.generate(() -> generateARandomFullyConnectedGenome(random, geneFactory)).limit(POPULATION_SIZE))).limit(1));
+        Population population = new Population(Stream.generate(() -> new Species(Stream.generate(() -> generateARandomFullyConnectedGenome(random, geneFactory)).limit(POPULATION_SIZE), 0)).limit(1));
 		
 		PongFrame frame = new PongFrame();
 		frame.setVisible(true);
@@ -139,32 +142,42 @@ public class Pong {
 		System.out.format("Generation #%d: (%d) %s%n", generation, fitness.applyAsInt(fittest), fittest.toGraphviz());
 
 		if (PLAY_GENERATIONS) {
-			evaluateFitness(fittest, random, frame);
+			simulateGame(fittest, random, frame);
 		}
 		
 		return population;
 	}
 	
 	private static int evaluateFitness(Genome genome, Random random, PongFrame frame) {
-		boolean headless = (frame == null);
-
-		ActiveListener activeListener = new ActiveListener();
-		TimeAliveListener timeAliveListener = new TimeAliveListener(headless ? MAX_TICKS : 0);
-		Bot bot = new Bot(genome, 1);
-
-		Game game = new Game(random);
-		game.addPongListener(activeListener);
-		game.addPongListener(timeAliveListener);
-		game.addPongListener(bot);
-		
-		if (!headless) {
-			frame.setGame(game);
-		}
-		
-		game.start(headless ? HEADLESS_TICK_MILLIS : TICK_MILLIS);
-		
-		activeListener.waitUntilStopped();
-		
-		return timeAliveListener.getTicks();
+	    return (int) IntStream.generate(() -> simulateGame(genome, random, frame))
+                .limit(SIMULATE_BEST_OF)
+                .average()
+                .orElse(0d);
 	}
+
+    private static int simulateGame(Genome genome, Random random, PongFrame frame) {
+        boolean headless = (frame == null);
+
+        ActiveListener activeListener = new ActiveListener();
+        TimeAliveListener timeAliveListener = new TimeAliveListener(headless ? MAX_TICKS : 0);
+        Bot bot = new Bot(genome, 1);
+
+        Game game = new Game(random);
+        game.addPongListener(activeListener);
+        game.addPongListener(timeAliveListener);
+        game.addPongListener(bot);
+
+        if (!headless) {
+            frame.setGame(game);
+        }
+
+        game.start(headless ? HEADLESS_TICK_MILLIS : TICK_MILLIS);
+
+        activeListener.waitUntilStopped();
+
+        int energyScore = timeAliveListener.getTicks() - bot.getEffort();
+        int distanceFromBall = Math.abs(game.getBat2().getY() - game.getBall().getY());
+
+        return (energyScore > distanceFromBall) ? energyScore - distanceFromBall : energyScore;
+    }
 }

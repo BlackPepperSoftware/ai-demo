@@ -9,10 +9,12 @@ public class Bot extends PongAdapter {
 	private final Genome genome;
 	
 	private final int player;
-	
+	private int effort;
+
 	public Bot(Genome genome, int player) {
 		this.genome = genome;
 		this.player = player;
+		this.effort = 0;
 	}
 	
 	@Override
@@ -33,15 +35,21 @@ public class Bot extends PongAdapter {
 			
 			case 1:
 				game.moveBat(player, -1);
+				effort++;
 				break;
 			
 			case 2:
 				game.moveBat(player, 1);
+				effort++;
 				break;
 		}
 	}
-	
-	private static double normalize(double value, double min, double max) {
+
+    public int getEffort() {
+        return effort;
+    }
+
+    private static double normalize(double value, double min, double max) {
 		return (value - min) / (max - min);
 	}
 	

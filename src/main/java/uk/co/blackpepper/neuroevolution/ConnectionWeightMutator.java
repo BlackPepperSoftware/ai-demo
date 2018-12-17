@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 public class ConnectionWeightMutator implements Mutator {
 	
-	private static final double RATE = 0.25;
+	private static final double RATE = 0.5;
 	
 	private static final double STEP = 0.1;
 	
