@@ -1,5 +1,6 @@
 package uk.co.blackpepper.neuroevolution;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,29 +120,55 @@ public class Evolver {
 
     private Stream<Species> reproduce(Population population, Map<Genome, Integer> fitnesses) {
 
+        population.getSpecies().forEach(species -> species.setFittestScore(species.getGenomes().mapToDouble(genome -> fitnesses.get(genome)).max().orElse(0d)));
+
+        double averageFittestScore = population.getSpecies().mapToDouble(species -> species.getFittestScore()).average()
+                .orElseThrow(() -> new IllegalStateException("no average score"));
+
         List<Species> newSpecies = population.getSpecies()
-                .map(species -> new Species(Stream.generate(() -> reproduce(species, fitnesses)).limit(species.getSize())))
+                .map(species -> new Species(Stream.generate(() -> reproduce(species, fitnesses)).limit(species.getSize()), species.getFittestScore()))
                 .collect(Collectors.toList());
 
         List<Species> speciesBelonging = newSpecies.stream()
-                .map(species -> new Species(species.getGenomes().filter(genome -> genomeComparator.compare(genome, species.getRepresentative()) == 0)))
+                .map(species -> new Species(species.getGenomes().filter(genome -> genomeComparator.compare(genome, species.getRepresentative()) == 0), species.getFittestScore()))
                 .collect(Collectors.toList());
+
+        List<Species> speciesThatMadeThreshold = speciesBelonging.stream()
+                .filter(species -> species.getFittestScore() >= averageFittestScore)
+                .collect(Collectors.toList());
+
+        long diff = speciesBelonging.stream().flatMap(species -> species.getGenomes()).count() -
+                speciesThatMadeThreshold.stream().flatMap(species -> species.getGenomes()).count();
 
         List<Genome> genomesThatDontBelong = newSpecies.stream()
                 .flatMap(species -> species.getGenomes().filter(genome -> genomeComparator.compare(genome, species.getRepresentative()) != 0))
                 .collect(Collectors.toList());
 
+        if(speciesThatMadeThreshold.size() > 0) {
+            Random random = new Random();
+
+            List<Species> hat = speciesThatMadeThreshold.stream().sorted(Comparator.comparingDouble(Species::getFittestScore)).limit(3)
+                    .collect(Collectors.toList());
+
+            genomesThatDontBelong.addAll(
+                    Stream.generate(() -> reproduce(
+                            hat.get(random.nextInt(hat.size())), fitnesses))
+                            .limit(diff)
+                            .collect(Collectors.toList())
+            );
+        }
+
         genomesThatDontBelong.forEach(genome ->
-            speciesBelonging.stream()
+                speciesThatMadeThreshold.stream()
                     .filter(species -> genomeComparator.compare(genome, species.getRepresentative()) == 0).findFirst()
                         .orElseGet(() -> {
                             Species species = new Species();
-                            speciesBelonging.add(species);
+                            speciesThatMadeThreshold.add(species);
                             return species;
                         }).add(genome)
         );
 
-        return speciesBelonging.stream();
+        return speciesThatMadeThreshold.stream();
     }
 
     private Genome reproduce(Species species, Map<Genome, Integer> fitnesses) {

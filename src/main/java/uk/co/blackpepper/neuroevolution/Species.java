@@ -12,14 +12,24 @@ public class Species {
 
     private List<Genome> genomes;
     private Genome representative;
+    private double fittestScore;
 
     public Species() {
         this.genomes = new ArrayList<>();
     }
 
-    public Species(Stream<Genome> genomes) {
+    public Species(Stream<Genome> genomes, double fittestScore) {
         this.genomes = genomes.collect(toList());
         this.representative = this.genomes.get(new Random().nextInt(this.genomes.size()));
+        this.fittestScore = fittestScore;
+    }
+
+    public double getFittestScore() {
+        return fittestScore;
+    }
+
+    public void setFittestScore(double fittestScore) {
+        this.fittestScore = Math.max(fittestScore, this.fittestScore);
     }
 
     public void add(Genome genome) {
