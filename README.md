@@ -4,4 +4,4 @@ Java implementation of [NEAT](http://nn.cs.utexas.edu/downloads/papers/stanley.e
 
 ## See also
 
-* Blog: [Neuroevolution](https://www.blackpepper.co.uk/what-we-think/blog/neuroevolution)
+* Blog: [Neuroevolution II](https://www.blackpepper.co.uk/blog/neuroevolution-ii)
